@@ -9,7 +9,9 @@ outputpath = "../data"
 library(fda)
 
 #Read data and extract values and years, plus reordering years in the correct order
-rawdata<-read.table("../data/smoking_prevalence_b.txt",header=T)
+#rawdata<-read.table("../data/smoking_prevalence_b.txt",header=T)
+#rawdata<-read.table("../data/smoking_prevalence_f.txt",header=T)
+rawdata<-read.table("../data/smoking_prevalence_m.txt",header=T)
 
 data<-rawdata[c(2:7,1),2:37]
 head(data)
@@ -139,10 +141,10 @@ final_dataset <- final_dataset[order(rownames(final_dataset)),]
 
 
 #SAVING FILES
-#write.table(prevalence_female_table, 
-#            "smoking_prevalence_both_2007-2020.txt", 
+#write.table(final_dataset, 
+#            "smoking_prevalence_males_2007-2020.txt", 
 #            sep = "\t")
-#, 
+#
 #            "../data/smoking_prevalence_f.txt", 
 #            sep = "\t")
 #
