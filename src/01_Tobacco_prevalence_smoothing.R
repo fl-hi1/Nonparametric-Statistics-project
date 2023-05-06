@@ -8,10 +8,10 @@ outputpath = "../data"
 #install.packages('fda')
 library(fda)
 
-#Read data and extract values and years, plus reordering years in the correct order
+#####Read data and extract values and years, plus reordering years in the correct order
 #rawdata<-read.table("../data/smoking_prevalence_b.txt",header=T)
-#rawdata<-read.table("../data/smoking_prevalence_f.txt",header=T)
-rawdata<-read.table("../data/smoking_prevalence_m.txt",header=T)
+rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_f.txt",header=T)
+#rawdata<-read.table("../data/smoking_prevalence_m.txt",header=T)
 
 data<-rawdata[c(2:7,1),2:37]
 head(data)
