@@ -16,9 +16,10 @@ rawdata_f<-read.table("../data/semiprocessed_datasets/smoking_prevalence_f.txt",
 rawdata_m<-read.table("../data/semiprocessed_datasets/smoking_prevalence_m.txt",header=T)
 rawdata_b<-read.table("../data/semiprocessed_datasets/smoking_prevalence_b.txt",header=T)
 
+
 years<-rawdata_f$YEAR..DISPLAY.
 
-y_f_list=c(rawdata_b[,2:37])
+y_f_list=c(rawdata_f[,2:37])
 y_f<-unlist(y_f_list)
 n<-length(y_f)
 plot(y_f)
