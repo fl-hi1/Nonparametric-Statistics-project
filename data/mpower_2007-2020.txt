@@ -1,0 +1,289 @@
+"Country"	"Year"	"Monitor"	"Protect.from.tobacco.smoke"	"Offer.help.to.quit.tobacco.use"	"Warn.about.the.dangers.of.tobacco"	"Enforce.bans.on.tobacco.advertising"	"Raise.taxes.on.tobacco"	"Anti.tobacco.mass.media.campaigns.Country"	"Anti.tobacco.mass.media.campaigns.Year"	"Anti.tobacco.mass.media.campaigns.Anti.tobacco.mass.media.campaigns"
+"65"	"Australia"	2020	4	5	4	5	4	"4"	Australia	2020	2
+"66"	"Australia"	2018	4	5	5	5	4	"5"	Australia	2018	5
+"67"	"Australia"	2016	4	5	5	5	4	"4"	Australia	2016	5
+"68"	"Australia"	2014	4	5	5	5	4	"4"	Australia	2014	5
+"69"	"Australia"	2012	4	5	5	5	4	"4"	Australia	2012	5
+"70"	"Australia"	2010	4	5	5	5	4	"4"	Australia	2010	5
+"71"	"Australia"	2008	4	5	5	5	4	"4"	Australia	2008	5
+"72"	"Australia"	2007	4	5	5	5	4	""	Australia	2007	5
+"73"	"Austria"	2020	4	3	5	5	4	"4"	Austria	2020	4
+"74"	"Austria"	2018	4	2	4	5	4	"5"	Austria	2018	5
+"75"	"Austria"	2016	4	2	4	5	4	"5"	Austria	2016	5
+"76"	"Austria"	2014	4	2	4	3	4	"4"	Austria	2014	2
+"77"	"Austria"	2012	4	2	4	3	4	"4"	Austria	2012	2
+"78"	"Austria"	2010	4	2	4	3	4	"4"	Austria	2010	2
+"79"	"Austria"	2008	4	2	4	3	4	"4"	Austria	2008	2
+"80"	"Austria"	2007	4	2	4	3	4	""	Austria	2007	2
+"129"	"Belgium"	2020	4	2	4	5	4	"5"	Belgium	2020	2
+"130"	"Belgium"	2018	4	2	4	5	4	"5"	Belgium	2018	2
+"131"	"Belgium"	2016	4	2	4	5	4	"5"	Belgium	2016	4
+"132"	"Belgium"	2014	4	2	4	4	4	"5"	Belgium	2014	2
+"133"	"Belgium"	2012	4	2	4	4	4	"5"	Belgium	2012	2
+"134"	"Belgium"	2010	4	2	4	4	4	"5"	Belgium	2010	2
+"135"	"Belgium"	2008	4	3	5	4	4	"5"	Belgium	2008	2
+"136"	"Belgium"	2007	4	3	5	4	4	""	Belgium	2007	2
+"249"	"Canada"	2020	4	5	5	5	4	"4"	Canada	2020	4
+"250"	"Canada"	2018	4	5	5	5	4	"4"	Canada	2018	2
+"251"	"Canada"	2016	4	5	5	5	4	"4"	Canada	2016	2
+"252"	"Canada"	2014	4	5	5	5	4	"4"	Canada	2014	2
+"253"	"Canada"	2012	4	5	5	5	4	"4"	Canada	2012	2
+"254"	"Canada"	2010	4	5	5	4	4	"4"	Canada	2010	2
+"255"	"Canada"	2008	4	5	5	4	2	"4"	Canada	2008	2
+"256"	"Canada"	2007	4	5	3	4	2	""	Canada	2007	2
+"273"	"Chile"	2020	4	5	3	5	4	"5"	Chile	2020	4
+"274"	"Chile"	2018	4	5	3	5	4	"5"	Chile	2018	4
+"275"	"Chile"	2016	4	5	3	5	4	"5"	Chile	2016	2
+"276"	"Chile"	2014	4	5	3	5	4	"5"	Chile	2014	1
+"277"	"Chile"	2012	4	3	3	5	4	"5"	Chile	2012	4
+"278"	"Chile"	2010	4	3	3	5	4	"5"	Chile	2010	2
+"279"	"Chile"	2008	4	3	3	5	4	"5"	Chile	2008	2
+"280"	"Chile"	2007	4	3	3	5	4	""	Chile	2007	2
+"289"	"Colombia"	2020	3	5	4	4	5	"4"	Colombia	2020	3
+"290"	"Colombia"	2018	3	5	4	4	5	"5"	Colombia	2018	1
+"291"	"Colombia"	2016	4	5	4	4	5	"3"	Colombia	2016	5
+"292"	"Colombia"	2014	4	5	3	4	5	"3"	Colombia	2014	5
+"293"	"Colombia"	2012	4	5	3	4	5	"4"	Colombia	2012	4
+"294"	"Colombia"	2010	3	5	3	4	5	"3"	Colombia	2010	5
+"295"	"Colombia"	2008	3	5	3	2	2	"3"	Colombia	2008	5
+"296"	"Colombia"	2007	3	2	3	2	2	""	Colombia	2007	5
+"361"	"Czechia"	2020	4	3	5	5	4	"5"	Czechia	2020	4
+"362"	"Czechia"	2018	4	3	5	5	4	"5"	Czechia	2018	4
+"363"	"Czechia"	2016	4	3	4	5	4	"5"	Czechia	2016	2
+"364"	"Czechia"	2014	4	3	3	3	4	"5"	Czechia	2014	4
+"365"	"Czechia"	2012	4	3	4	3	4	"5"	Czechia	2012	3
+"366"	"Czechia"	2010	4	3	4	3	4	"5"	Czechia	2010	4
+"367"	"Czechia"	2008	3	3	4	3	4	"5"	Czechia	2008	4
+"368"	"Czechia"	2007	3	3	3	3	4	""	Czechia	2007	4
+"385"	"Denmark"	2020	4	2	5	5	4	"5"	Denmark	2020	4
+"386"	"Denmark"	2018	4	2	5	5	4	"4"	Denmark	2018	4
+"387"	"Denmark"	2016	4	2	5	5	4	"4"	Denmark	2016	5
+"388"	"Denmark"	2014	4	2	5	4	4	"4"	Denmark	2014	2
+"389"	"Denmark"	2012	4	2	5	4	4	"5"	Denmark	2012	1
+"390"	"Denmark"	2010	4	2	4	3	4	"4"	Denmark	2010	5
+"391"	"Denmark"	2008	4	2	4	3	4	"4"	Denmark	2008	5
+"392"	"Denmark"	2007	4	2	4	3	4	""	Denmark	2007	5
+"457"	"Estonia"	2020	4	2	4	5	4	"5"	Estonia	2020	5
+"458"	"Estonia"	2018	4	2	4	5	4	"5"	Estonia	2018	5
+"459"	"Estonia"	2016	4	2	5	5	4	"5"	Estonia	2016	5
+"460"	"Estonia"	2014	4	2	4	3	4	"5"	Estonia	2014	2
+"461"	"Estonia"	2012	4	2	4	3	4	"5"	Estonia	2012	2
+"462"	"Estonia"	2010	4	2	3	3	4	"5"	Estonia	2010	1
+"463"	"Estonia"	2008	4	2	3	3	4	"5"	Estonia	2008	1
+"464"	"Estonia"	2007	4	2	3	3	4	""	Estonia	2007	1
+"489"	"Finland"	2020	4	2	4	5	5	"5"	Finland	2020	4
+"490"	"Finland"	2018	4	2	4	5	5	"5"	Finland	2018	3
+"491"	"Finland"	2016	4	2	4	5	5	"5"	Finland	2016	1
+"492"	"Finland"	2014	4	2	4	3	4	"5"	Finland	2014	5
+"493"	"Finland"	2012	4	2	4	3	4	"5"	Finland	2012	3
+"494"	"Finland"	2010	4	2	4	3	4	"5"	Finland	2010	5
+"495"	"Finland"	2008	4	2	4	3	4	"5"	Finland	2008	5
+"496"	"Finland"	2007	4	2	4	3	4	""	Finland	2007	5
+"497"	"France"	2020	4	3	4	5	4	"5"	France	2020	5
+"498"	"France"	2018	4	3	4	5	4	"5"	France	2018	5
+"499"	"France"	2016	4	3	4	5	4	"5"	France	2016	1
+"500"	"France"	2014	4	3	4	4	4	"5"	France	2014	4
+"501"	"France"	2012	4	3	4	4	4	"5"	France	2012	4
+"502"	"France"	2010	4	3	4	4	4	"5"	France	2010	3
+"503"	"France"	2008	4	3	4	3	4	"5"	France	2008	3
+"504"	"France"	2007	4	3	4	3	4	""	France	2007	3
+"529"	"Germany"	2020	4	2	4	5	4	"4"	Germany	2020	5
+"530"	"Germany"	2018	4	2	4	5	4	"4"	Germany	2018	5
+"531"	"Germany"	2016	4	2	4	5	4	"4"	Germany	2016	4
+"532"	"Germany"	2014	4	2	4	3	4	"4"	Germany	2014	4
+"533"	"Germany"	2012	4	2	4	3	4	"4"	Germany	2012	4
+"534"	"Germany"	2010	4	2	4	3	4	"4"	Germany	2010	5
+"535"	"Germany"	2008	4	2	4	3	4	"5"	Germany	2008	5
+"536"	"Germany"	2007	4	2	4	3	4	""	Germany	2007	5
+"545"	"Greece"	2020	4	5	4	5	4	"5"	Greece	2020	2
+"546"	"Greece"	2018	4	5	4	5	4	"5"	Greece	2018	2
+"547"	"Greece"	2016	4	5	4	5	4	"5"	Greece	2016	2
+"548"	"Greece"	2014	4	5	4	3	4	"5"	Greece	2014	1
+"549"	"Greece"	2012	4	5	4	3	4	"5"	Greece	2012	1
+"550"	"Greece"	2010	4	5	3	3	4	"5"	Greece	2010	5
+"551"	"Greece"	2008	4	2	3	3	4	"4"	Greece	2008	5
+"552"	"Greece"	2007	4	2	3	3	4	""	Greece	2007	5
+"609"	"Hungary"	2020	4	4	4	5	4	"4"	Hungary	2020	2
+"610"	"Hungary"	2018	4	4	4	5	4	"4"	Hungary	2018	2
+"611"	"Hungary"	2016	4	4	4	5	4	"4"	Hungary	2016	2
+"612"	"Hungary"	2014	4	4	4	4	4	"5"	Hungary	2014	3
+"613"	"Hungary"	2012	4	4	4	4	4	"5"	Hungary	2012	4
+"614"	"Hungary"	2010	3	2	4	3	4	"5"	Hungary	2010	3
+"615"	"Hungary"	2008	3	2	3	3	4	"4"	Hungary	2008	3
+"616"	"Hungary"	2007	3	2	3	3	4	""	Hungary	2007	3
+"617"	"Iceland"	2020	4	2	3	4	5	"4"	Iceland	2020	2
+"618"	"Iceland"	2018	4	2	3	4	5	"4"	Iceland	2018	2
+"619"	"Iceland"	2016	4	2	3	4	5	"4"	Iceland	2016	2
+"620"	"Iceland"	2014	4	2	3	4	5	"4"	Iceland	2014	2
+"621"	"Iceland"	2012	4	2	3	4	5	"4"	Iceland	2012	3
+"622"	"Iceland"	2010	4	2	3	3	5	"4"	Iceland	2010	2
+"623"	"Iceland"	2008	4	2	3	3	5	"4"	Iceland	2008	2
+"624"	"Iceland"	2007	4	2	3	3	5	""	Iceland	2007	2
+"657"	"Ireland"	2020	4	5	5	5	4	"5"	Ireland	2020	5
+"658"	"Ireland"	2018	4	5	5	5	4	"5"	Ireland	2018	5
+"659"	"Ireland"	2016	4	5	5	5	4	"5"	Ireland	2016	5
+"660"	"Ireland"	2014	4	5	5	4	4	"5"	Ireland	2014	5
+"661"	"Ireland"	2012	4	5	5	4	4	"5"	Ireland	2012	1
+"662"	"Ireland"	2010	4	5	5	3	4	"5"	Ireland	2010	5
+"663"	"Ireland"	2008	4	5	5	3	4	"5"	Ireland	2008	5
+"664"	"Ireland"	2007	4	5	5	3	4	""	Ireland	2007	5
+"665"	"Israel"	2020	2	3	4	4	2	"5"	Israel	2020	2
+"666"	"Israel"	2018	3	3	4	3	2	"5"	Israel	2018	2
+"667"	"Israel"	2016	3	3	5	3	2	"5"	Israel	2016	2
+"668"	"Israel"	2014	3	2	5	3	2	"5"	Israel	2014	1
+"669"	"Israel"	2012	2	2	5	3	2	"5"	Israel	2012	2
+"670"	"Israel"	2010	4	2	5	3	2	"4"	Israel	2010	4
+"671"	"Israel"	2008	4	2	5	3	2	"4"	Israel	2008	4
+"672"	"Israel"	2007	4	2	4	3	2	""	Israel	2007	4
+"673"	"Italy"	2020	4	2	4	5	4	"5"	Italy	2020	2
+"674"	"Italy"	2018	4	2	4	5	4	"5"	Italy	2018	5
+"675"	"Italy"	2016	4	2	4	5	4	"5"	Italy	2016	5
+"676"	"Italy"	2014	4	2	4	3	4	"5"	Italy	2014	4
+"677"	"Italy"	2012	4	2	4	3	4	"5"	Italy	2012	3
+"678"	"Italy"	2010	4	2	4	3	4	"5"	Italy	2010	4
+"679"	"Italy"	2008	4	2	4	3	4	"5"	Italy	2008	4
+"680"	"Italy"	2007	4	2	4	3	4	""	Italy	2007	4
+"689"	"Japan"	2020	4	3	4	4	2	"4"	Japan	2020	5
+"690"	"Japan"	2018	4	3	4	3	2	"4"	Japan	2018	3
+"691"	"Japan"	2016	4	2	4	3	2	"4"	Japan	2016	2
+"692"	"Japan"	2014	4	2	4	3	2	"4"	Japan	2014	2
+"693"	"Japan"	2012	4	2	4	3	2	"4"	Japan	2012	2
+"694"	"Japan"	2010	4	2	4	3	2	"4"	Japan	2010	2
+"695"	"Japan"	2008	4	2	4	3	2	"4"	Japan	2008	2
+"696"	"Japan"	2007	4	2	4	3	2	""	Japan	2007	2
+"753"	"Latvia"	2020	4	4	4	5	4	"5"	Latvia	2020	5
+"754"	"Latvia"	2018	4	4	4	5	4	"5"	Latvia	2018	2
+"755"	"Latvia"	2016	4	4	4	5	4	"5"	Latvia	2016	4
+"756"	"Latvia"	2014	4	3	4	4	4	"5"	Latvia	2014	2
+"757"	"Latvia"	2012	4	3	4	4	4	"5"	Latvia	2012	2
+"758"	"Latvia"	2010	4	3	4	4	4	"5"	Latvia	2010	2
+"759"	"Latvia"	2008	4	4	3	4	4	"4"	Latvia	2008	2
+"760"	"Latvia"	2007	4	2	3	3	4	""	Latvia	2007	2
+"793"	"Lithuania"	2020	4	3	4	5	4	"4"	Lithuania	2020	2
+"794"	"Lithuania"	2018	4	3	4	5	4	"4"	Lithuania	2018	2
+"795"	"Lithuania"	2016	4	3	4	5	4	"5"	Lithuania	2016	2
+"796"	"Lithuania"	2014	4	3	4	3	4	"5"	Lithuania	2014	2
+"797"	"Lithuania"	2012	4	3	4	3	4	"5"	Lithuania	2012	2
+"798"	"Lithuania"	2010	4	3	4	3	4	"5"	Lithuania	2010	2
+"799"	"Lithuania"	2008	4	3	4	3	4	"4"	Lithuania	2008	2
+"800"	"Lithuania"	2007	3	3	4	3	4	""	Lithuania	2007	2
+"801"	"Luxembourg"	2020	4	3	5	5	4	"4"	Luxembourg	2020	2
+"802"	"Luxembourg"	2018	4	3	5	5	4	"4"	Luxembourg	2018	5
+"803"	"Luxembourg"	2016	4	2	5	3	4	"4"	Luxembourg	2016	4
+"804"	"Luxembourg"	2014	4	2	4	3	4	"4"	Luxembourg	2014	5
+"805"	"Luxembourg"	2012	4	2	4	3	4	"4"	Luxembourg	2012	5
+"806"	"Luxembourg"	2010	4	2	4	3	4	"4"	Luxembourg	2010	1
+"807"	"Luxembourg"	2008	3	2	2	3	4	"4"	Luxembourg	2008	1
+"808"	"Luxembourg"	2007	3	2	2	3	4	""	Luxembourg	2007	1
+"881"	"Mexico"	2020	2	2	5	5	2	"4"	Mexico	2020	4
+"882"	"Mexico"	2018	2	2	5	5	2	"4"	Mexico	2018	1
+"883"	"Mexico"	2016	3	2	5	5	2	"4"	Mexico	2016	1
+"884"	"Mexico"	2014	3	2	5	5	2	"4"	Mexico	2014	4
+"885"	"Mexico"	2012	3	2	4	5	2	"4"	Mexico	2012	2
+"886"	"Mexico"	2010	2	2	4	5	2	"4"	Mexico	2010	2
+"887"	"Mexico"	2008	2	2	4	4	2	"4"	Mexico	2008	2
+"888"	"Mexico"	2007	2	2	4	2	2	""	Mexico	2007	2
+"969"	"Netherlands"	2020	4	2	5	5	4	"5"	Netherlands	2020	2
+"970"	"Netherlands"	2018	4	2	5	5	4	"4"	Netherlands	2018	4
+"971"	"Netherlands"	2016	4	2	5	5	4	"4"	Netherlands	2016	5
+"972"	"Netherlands"	2014	4	2	5	3	4	"4"	Netherlands	2014	5
+"973"	"Netherlands"	2012	4	2	4	3	4	"4"	Netherlands	2012	2
+"974"	"Netherlands"	2010	4	2	4	3	4	"4"	Netherlands	2010	5
+"975"	"Netherlands"	2008	4	2	3	3	4	"4"	Netherlands	2008	5
+"976"	"Netherlands"	2007	4	2	3	3	4	""	Netherlands	2007	5
+"977"	"New Zealand"	2020	4	5	5	5	4	"5"	New Zealand	2020	5
+"978"	"New Zealand"	2018	4	5	5	5	4	"5"	New Zealand	2018	5
+"979"	"New Zealand"	2016	4	5	5	5	4	"4"	New Zealand	2016	5
+"980"	"New Zealand"	2014	4	5	5	5	4	"5"	New Zealand	2014	4
+"981"	"New Zealand"	2012	4	5	5	5	4	"4"	New Zealand	2012	5
+"982"	"New Zealand"	2010	4	5	5	5	4	"5"	New Zealand	2010	4
+"983"	"New Zealand"	2008	4	5	5	5	4	"4"	New Zealand	2008	4
+"984"	"New Zealand"	2007	4	5	5	5	4	""	New Zealand	2007	4
+"1017"	"Norway"	2020	4	5	4	4	4	"4"	Norway	2020	5
+"1018"	"Norway"	2018	4	5	4	4	4	"4"	Norway	2018	5
+"1019"	"Norway"	2016	4	5	4	4	4	"4"	Norway	2016	5
+"1020"	"Norway"	2014	4	5	4	4	4	"4"	Norway	2014	5
+"1021"	"Norway"	2012	4	3	4	4	4	"4"	Norway	2012	5
+"1022"	"Norway"	2010	4	3	4	4	4	"4"	Norway	2010	2
+"1023"	"Norway"	2008	4	3	4	3	4	"4"	Norway	2008	2
+"1024"	"Norway"	2007	4	3	4	3	4	""	Norway	2007	2
+"1097"	"Poland"	2020	4	3	4	5	4	"5"	Poland	2020	3
+"1098"	"Poland"	2018	4	3	4	5	4	"5"	Poland	2018	2
+"1099"	"Poland"	2016	4	3	4	5	4	"5"	Poland	2016	4
+"1100"	"Poland"	2014	4	3	4	3	4	"5"	Poland	2014	2
+"1101"	"Poland"	2012	4	3	4	3	4	"5"	Poland	2012	4
+"1102"	"Poland"	2010	4	3	4	3	4	"5"	Poland	2010	5
+"1103"	"Poland"	2008	4	2	4	3	4	"5"	Poland	2008	5
+"1104"	"Poland"	2007	4	2	4	3	4	""	Poland	2007	5
+"1105"	"Portugal"	2020	4	4	4	5	4	"5"	Portugal	2020	2
+"1106"	"Portugal"	2018	4	4	4	5	4	"4"	Portugal	2018	3
+"1107"	"Portugal"	2016	4	4	4	5	4	"4"	Portugal	2016	5
+"1108"	"Portugal"	2014	4	3	4	3	4	"4"	Portugal	2014	5
+"1109"	"Portugal"	2012	4	3	4	3	4	"5"	Portugal	2012	2
+"1110"	"Portugal"	2010	4	3	4	3	4	"5"	Portugal	2010	2
+"1111"	"Portugal"	2008	4	3	4	3	4	"5"	Portugal	2008	2
+"1112"	"Portugal"	2007	4	3	4	3	4	""	Portugal	2007	2
+"1121"	"Republic of Korea"	2020	4	2	5	4	2	"4"	Republic of Korea	2020	5
+"1122"	"Republic of Korea"	2018	4	2	5	4	2	"4"	Republic of Korea	2018	5
+"1123"	"Republic of Korea"	2016	4	2	5	4	2	"4"	Republic of Korea	2016	5
+"1124"	"Republic of Korea"	2014	4	2	5	3	2	"4"	Republic of Korea	2014	5
+"1125"	"Republic of Korea"	2012	4	2	5	3	2	"4"	Republic of Korea	2012	5
+"1126"	"Republic of Korea"	2010	4	2	5	3	2	"4"	Republic of Korea	2010	1
+"1127"	"Republic of Korea"	2008	4	2	5	3	2	"4"	Republic of Korea	2008	1
+"1128"	"Republic of Korea"	2007	4	2	5	3	2	""	Republic of Korea	2007	1
+"1273"	"Slovenia"	2020	4	3	4	5	5	"5"	Slovenia	2020	2
+"1274"	"Slovenia"	2018	4	3	4	5	5	"5"	Slovenia	2018	3
+"1275"	"Slovenia"	2016	4	3	4	3	4	"5"	Slovenia	2016	2
+"1276"	"Slovenia"	2014	4	3	4	3	4	"5"	Slovenia	2014	2
+"1277"	"Slovenia"	2012	4	3	4	3	4	"5"	Slovenia	2012	1
+"1278"	"Slovenia"	2010	4	3	4	3	4	"5"	Slovenia	2010	2
+"1279"	"Slovenia"	2008	4	3	4	3	4	"4"	Slovenia	2008	2
+"1280"	"Slovenia"	2007	3	3	4	3	4	""	Slovenia	2007	2
+"1313"	"Spain"	2020	4	5	4	5	5	"5"	Spain	2020	4
+"1314"	"Spain"	2018	4	5	4	5	5	"5"	Spain	2018	2
+"1315"	"Spain"	2016	4	5	4	4	5	"5"	Spain	2016	2
+"1316"	"Spain"	2014	4	5	4	4	5	"5"	Spain	2014	2
+"1317"	"Spain"	2012	4	5	4	4	5	"5"	Spain	2012	2
+"1318"	"Spain"	2010	4	5	4	4	5	"5"	Spain	2010	2
+"1319"	"Spain"	2008	4	4	4	3	4	"5"	Spain	2008	2
+"1320"	"Spain"	2007	4	4	4	3	4	""	Spain	2007	2
+"1345"	"Sweden"	2020	4	2	5	5	4	"4"	Sweden	2020	4
+"1346"	"Sweden"	2018	4	2	5	5	4	"4"	Sweden	2018	2
+"1347"	"Sweden"	2016	4	2	4	5	4	"4"	Sweden	2016	2
+"1348"	"Sweden"	2014	4	2	4	3	4	"4"	Sweden	2014	2
+"1349"	"Sweden"	2012	4	2	4	3	4	"4"	Sweden	2012	2
+"1350"	"Sweden"	2010	4	2	4	3	4	"4"	Sweden	2010	5
+"1351"	"Sweden"	2008	4	2	4	3	4	"4"	Sweden	2008	5
+"1352"	"Sweden"	2007	4	2	4	3	4	""	Sweden	2007	5
+"1353"	"Switzerland"	2020	4	2	4	4	2	"4"	Switzerland	2020	2
+"1354"	"Switzerland"	2018	4	2	4	4	2	"4"	Switzerland	2018	5
+"1355"	"Switzerland"	2016	4	2	4	4	2	"4"	Switzerland	2016	5
+"1356"	"Switzerland"	2014	4	2	4	4	2	"4"	Switzerland	2014	2
+"1357"	"Switzerland"	2012	4	2	4	4	2	"4"	Switzerland	2012	5
+"1358"	"Switzerland"	2010	4	2	4	4	2	"4"	Switzerland	2010	5
+"1359"	"Switzerland"	2008	4	2	4	4	2	"4"	Switzerland	2008	5
+"1360"	"Switzerland"	2007	4	2	4	4	2	""	Switzerland	2007	5
+"1425"	"Türkiye"	2020	4	5	5	5	5	"5"	Türkiye	2020	5
+"1426"	"Türkiye"	2018	4	5	5	5	5	"5"	Türkiye	2018	5
+"1427"	"Türkiye"	2016	4	5	5	5	5	"5"	Türkiye	2016	5
+"1428"	"Türkiye"	2014	4	5	5	5	5	"5"	Türkiye	2014	5
+"1429"	"Türkiye"	2012	4	5	5	5	5	"5"	Türkiye	2012	5
+"1430"	"Türkiye"	2010	4	5	5	4	4	"5"	Türkiye	2010	5
+"1431"	"Türkiye"	2008	4	5	3	3	4	"4"	Türkiye	2008	5
+"1432"	"Türkiye"	2007	4	2	3	3	2	""	Türkiye	2007	5
+"1473"	"United Kingdom of Great Britain and Northern Ireland"	2020	4	5	4	5	4	"5"	United Kingdom of Great Britain and Northern Ireland	2020	5
+"1474"	"United Kingdom of Great Britain and Northern Ireland"	2018	4	5	4	5	4	"5"	United Kingdom of Great Britain and Northern Ireland	2018	5
+"1475"	"United Kingdom of Great Britain and Northern Ireland"	2016	4	5	4	5	4	"5"	United Kingdom of Great Britain and Northern Ireland	2016	5
+"1476"	"United Kingdom of Great Britain and Northern Ireland"	2014	4	5	4	4	4	"5"	United Kingdom of Great Britain and Northern Ireland	2014	5
+"1477"	"United Kingdom of Great Britain and Northern Ireland"	2012	4	5	4	4	4	"5"	United Kingdom of Great Britain and Northern Ireland	2012	5
+"1478"	"United Kingdom of Great Britain and Northern Ireland"	2010	4	5	4	4	4	"5"	United Kingdom of Great Britain and Northern Ireland	2010	5
+"1479"	"United Kingdom of Great Britain and Northern Ireland"	2008	4	5	4	4	4	"5"	United Kingdom of Great Britain and Northern Ireland	2008	5
+"1480"	"United Kingdom of Great Britain and Northern Ireland"	2007	4	5	4	4	4	""	United Kingdom of Great Britain and Northern Ireland	2007	5
+"1489"	"United States of America"	2020	4	2	5	5	2	"3"	United States of America	2020	5
+"1490"	"United States of America"	2018	4	2	5	4	2	"3"	United States of America	2018	5
+"1491"	"United States of America"	2016	4	2	5	4	2	"3"	United States of America	2016	5
+"1492"	"United States of America"	2014	4	2	5	4	2	"3"	United States of America	2014	5
+"1493"	"United States of America"	2012	4	2	5	4	2	"3"	United States of America	2012	5
+"1494"	"United States of America"	2010	4	2	5	4	2	"3"	United States of America	2010	2
+"1495"	"United States of America"	2008	4	2	5	2	2	"3"	United States of America	2008	2
+"1496"	"United States of America"	2007	4	2	3	2	2	""	United States of America	2007	2
