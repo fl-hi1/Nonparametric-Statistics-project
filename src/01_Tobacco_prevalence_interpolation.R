@@ -9,9 +9,9 @@ outputpath = "../data"
 library(fda)
 
 #####Read data and extract values and years, plus reordering years in the correct order
-#rawdata<-read.table("../data/smoking_prevalence_b.txt",header=T)
-rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_f.txt",header=T)
-#rawdata<-read.table("../data/smoking_prevalence_m.txt",header=T)
+rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_b.txt",header=T)
+#rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_f.txt",header=T)
+#rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_m.txt",header=T)
 
 data<-rawdata[c(2:7,1),2:37]
 head(data)
@@ -129,7 +129,7 @@ for (i in countryrange){
 predicted_values
 
 #MERGE DATA INTO A SINGLE ONE
-chosen_years <- c(2007, 2008, 2012, 2014, 2016,2018,2020)
+chosen_years <- c(2007, 2008, 2010, 2012, 2014, 2016,2018,2020)
 data<-data.frame(data)
 predicted_values<-data.frame(predicted_values)
 colnames(predicted_values)<-colnames(data)
@@ -142,9 +142,15 @@ final_dataset <- final_dataset[order(rownames(final_dataset)),]
 
 #SAVING FILES
 #write.table(final_dataset, 
-#            "smoking_prevalence_males_2007-2020.txt", 
+#            "../datasmoking_prevalence_males_2007-2020.txt", 
 #            sep = "\t")
 #
-#            "../data/smoking_prevalence_f.txt", 
+#write.table(final_dataset, 
+#            "../data/smoking_prevalence_females_2007-2020.txt", 
 #            sep = "\t")
 #
+#write.table(final_dataset, 
+#            "../data/smoking_prevalence_both_2007-2020.txt", 
+#            sep = "\t")
+#
+

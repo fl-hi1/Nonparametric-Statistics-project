@@ -57,8 +57,8 @@ mpower$Anti.tobacco.mass.media.campaigns<-original_table
 sum(is.na(mpower))
 
 #Saving the updated table
-#write.table(mpower, 
-#            "mpower.txt", 
-#            sep = "\t")
+write.table(campaigns_table, 
+            "mpower.txt", 
+            sep = "\t")
 
 
