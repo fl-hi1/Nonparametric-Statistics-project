@@ -115,7 +115,9 @@ matplot(years,smoothed,
         type="l",
         xlab="years",
         ylab="Age-standardized percent estimate",
-        main="Age-standardized estimate of smoking prevalence")
+        main="Age-standardized estimate of smoking prevalence", 
+        cex.main=2,
+        cex.lab=1.5)
 
 for (i in countryrange){
   points(years[1:length(years)], data[1:length(years),i], 

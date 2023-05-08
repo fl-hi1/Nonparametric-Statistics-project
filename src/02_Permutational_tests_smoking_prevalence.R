@@ -40,7 +40,7 @@ alpha <- 0.05
 test_statistic <- mean
 seed = 1996
 set.seed(seed)
-B=10000
+B=100000
 mu0 <- 0
 
 
@@ -59,153 +59,77 @@ perm_t_test_paired <- function(diff, mu0, iter = 10000, test_statistic = mean){
     diff.mean_perm <- test_statistic(diff_perm)
     T2[perm] <- abs(diff.mean_perm-mu0)
   }
+  hist(T2, xlim=c(0,T20))
+  abline(v=T20, col='green')
   
   p.value <- sum(T2 >= T20) / B
   return(p.value)
 }
 
 
-
-
-
-
-
+#####################################################
 
 ##### 2007
 mydf<-t(df_2007)
-
-p_val_2007<-perm_t_test_paired(mydf, c(0), B, mean)
+p_val_2007<-perm_t_test_paired(mydf, mu0, B, mean)
 p_val_2007
 
 # Empirical type-1 Error with confidence interval
 estimated.alpha <- sum(p_val_2007 < alpha) / B
 estimated.alpha
 c(estimated.alpha - sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2), estimated.alpha, estimated.alpha + sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2))
-
-################
-
-
-##### 2007
-mydf<-t(df_2007)
-
-p_val_2007<-perm_t_test_paired(mydf, c(0), B, mean)
-p_val_2007
-
-# Empirical type-1 Error with confidence interval
-estimated.alpha <- sum(p_val_2007 < alpha) / B
-estimated.alpha
-c(estimated.alpha - sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2), estimated.alpha, estimated.alpha + sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2))
-
-
-
-##### 2007
-mydf<-t(df_2007)
-
-p_val_2007<-perm_t_test_paired(mydf, c(0), B, mean)
-p_val_2007
-
-# Empirical type-1 Error with confidence interval
-estimated.alpha <- sum(p_val_2007 < alpha) / B
-estimated.alpha
-c(estimated.alpha - sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2), estimated.alpha, estimated.alpha + sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2))
-
-
-
-##### 2007
-mydf<-t(df_2007)
-
-p_val_2007<-perm_t_test_paired(mydf, c(0), B, mean)
-p_val_2007
-
-# Empirical type-1 Error with confidence interval
-estimated.alpha <- sum(p_val_2007 < alpha) / B
-estimated.alpha
-c(estimated.alpha - sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2), estimated.alpha, estimated.alpha + sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2))
-
-
-
-##### 2007
-mydf<-t(df_2007)
-
-p_val_2007<-perm_t_test_paired(mydf, c(0), B, mean)
-p_val_2007
-
-# Empirical type-1 Error with confidence interval
-estimated.alpha <- sum(p_val_2007 < alpha) / B
-estimated.alpha
-c(estimated.alpha - sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2), estimated.alpha, estimated.alpha + sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2))
-
-
-
-##### 2007
-mydf<-t(df_2007)
-
-p_val_2007<-perm_t_test_paired(mydf, c(0), B, mean)
-p_val_2007
-
-# Empirical type-1 Error with confidence interval
-estimated.alpha <- sum(p_val_2007 < alpha) / B
-estimated.alpha
-c(estimated.alpha - sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2), estimated.alpha, estimated.alpha + sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2))
-
-
-
-##### 2007
-mydf<-t(df_2007)
-
-p_val_2007<-perm_t_test_paired(mydf, c(0), B, mean)
-p_val_2007
-
-# Empirical type-1 Error with confidence interval
-estimated.alpha <- sum(p_val_2007 < alpha) / B
-estimated.alpha
-c(estimated.alpha - sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2), estimated.alpha, estimated.alpha + sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2))
-
-
 
 ##### 2008
 mydf<-t(df_2008)
-
-p_val_2008<-perm_t_test_paired(mydf, c(0), B, mean)
+p_val_2008<-perm_t_test_paired(mydf, mu0, B, mean)
 p_val_2008
-
-
 
 ##### 2010
 mydf<-t(df_2010)
-
-p_val_2010<-perm_t_test_paired(mydf, c(0), B, mean)
+p_val_2010<-perm_t_test_paired(mydf, mu0, B, mean)
 p_val_2010
-
 
 ##### 2012
 mydf<-t(df_2012)
-
-p_val_2012<-perm_t_test_paired(mydf, c(0), B, mean)
+p_val_2012<-perm_t_test_paired(mydf, mu0, B, mean)
 p_val_2012
-
 
 ##### 2014
 mydf<-t(df_2014)
-p_val_2014<-perm_t_test_paired(mydf, c(0), B, mean)
+p_val_2014<-perm_t_test_paired(mydf, mu0, B, mean)
 p_val_2014
-
 
 ##### 2016
-mydf<-t(df_2014)
-p_val_2014<-perm_t_test_paired(mydf, c(0), B, mean)
-p_val_2014
+mydf<-t(df_2016)
+p_val_2016<-perm_t_test_paired(mydf, mu0, B, mean)
+p_val_2016
 
 ##### 2018
-mydf<-t(df_2014)
-p_val_2014<-perm_t_test_paired(mydf, c(0), B, mean)
-p_val_2014
+mydf<-t(df_2018)
+p_val_2018<-perm_t_test_paired(mydf, mu0, B, mean)
+p_val_2018
 
 ##### 2020
 mydf<-t(df_2020)
-p_val_2020<-perm_t_test_paired(mydf, c(0), B, mean)
+p_val_2020<-perm_t_test_paired(mydf, mu0, B, mean)
 p_val_2020
 
+c(p_val_2007,
+  p_val_2008,
+  p_val_2010, 
+  p_val_2012, 
+  p_val_2014,
+  p_val_2016,
+  p_val_2018,
+  p_val_2020)
+
+
+#Conclusion: 
+#the difference is significant for all years, so it may make sense to
+#include f/m as a factor in regression
+
+
+#Question: is it better to do so or to run two different regressions separately?
 
 
 
