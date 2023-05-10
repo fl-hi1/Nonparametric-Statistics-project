@@ -65,6 +65,8 @@ pval_fun = sapply(test_grid, wrapper_full)
 index_in = pval_fun > alpha
 pred_t_interval = range(test_grid[index_in])
 pred_t_interval 
+
+
 # FEMALES 6.845729 33.868342 
 # MALES 13.13045 46.32820  
 # BOTH 12.58985 37.56316
@@ -92,7 +94,7 @@ pred_knn = test_grid[as.logical(c(0, abs(diff(index_in))))]
 pred_knn 
 # FEMALES 6.485427 33.147739
 # MALES 15.85564 59.45865
-#BOTH 13.82820 48.70827
+# BOTH 13.82820 48.70827
 
 #Plot p-value function
 plot_pval(test_grid, pval_fun, pred_knn, alpha)
@@ -122,7 +124,7 @@ plot_pval(test_grid, pval_fun, pred_mahalanobis, alpha)
 #Plot histogram of target variable
 hist(
   y_f,
-  breaks = 15,
+  breaks = 30,
   freq = FALSE,
   main = 'Histogram of Smoking prevalence',
   xlab = 'Smoking prevalence',
@@ -138,4 +140,4 @@ abline(v = jitter(pred_knn, amount=0.03), col = 'blue', lwd = 2)
 legend("topright",
        legend = c("T Prediction Interval", "Mahalanobis", "KNN (k=1)"),
        fill = c("red", "orange", "blue"))
-
+shapiro.test(y_f)

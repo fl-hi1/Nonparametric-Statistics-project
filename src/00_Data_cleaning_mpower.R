@@ -22,7 +22,7 @@ mpower<-rawdata[rawdata$Country %in% countries,]
 
 
 #First problem: NA estimate:
-sum(is.na(mpower$Protect.from.tobacco.smoke))
+sum(is.na(mpower$Anti.tobacco.mass.media.campaigns))
 #All the NaN are in the Anti tobacco mass-media campains
 
 #Rationale (may be overoptimistic)
@@ -39,7 +39,7 @@ campaigns_table <- campaigns %>%
   pivot_wider(names_from = Year, values_from = Anti.tobacco.mass.media.campaigns)
 
 
-#Values need to be estimated for 2008 2007 for ALL countries
+sss#Values need to be estimated for 2008 2007 for ALL countries
 campaigns_table$'2008'=campaigns_table$'2010'
 campaigns_table$'2007'=campaigns_table$'2010'
 

@@ -20,7 +20,7 @@ library(progress)
 # H0: mean(male-female) = mu
 # H1: mean(male-female) ≠ mu
 # with mu = c(0)
-# ==> center of simmetry of one multivariate population
+# ==> center of simmetry of one univariate population
 
 
 #Dataset of differences
@@ -71,6 +71,8 @@ perm_t_test_paired <- function(diff, mu0, iter = 10000, test_statistic = mean){
 
 ##### 2007
 mydf<-t(df_2007)
+quartz()
+perm_t_test_paired(mydf, mu0, B, mean)
 p_val_2007<-perm_t_test_paired(mydf, mu0, B, mean)
 p_val_2007
 
@@ -124,7 +126,7 @@ c(p_val_2007,
   p_val_2020)
 
 
-#Conclusion: 
+s#Conclusion: 
 #the difference is significant for all years, so it may make sense to
 #include f/m as a factor in regression
 

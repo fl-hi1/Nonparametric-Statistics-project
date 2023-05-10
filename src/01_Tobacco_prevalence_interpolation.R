@@ -9,6 +9,7 @@ outputpath = "../data"
 library(fda)
 
 #####Read data and extract values and years, plus reordering years in the correct order
+
 rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_b.txt",header=T)
 #rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_f.txt",header=T)
 #rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_m.txt",header=T)
