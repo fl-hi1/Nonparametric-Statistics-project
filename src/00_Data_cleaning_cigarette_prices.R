@@ -7,6 +7,16 @@ outputpath = "../data"
 rawdata<-read.csv("../data/raw_datasets/Cigarette_taxes_2008-2020.csv",header=T)
 
 countries<-read.table("../data/OECD_countries_income_level",header=T)$Country
+countries<-c(countries,
+             "Czechia", 
+             "Republic of Korea",
+             "Slovak Republic",
+             "Slovakia",
+             "Türkiye",
+             "United States of America",
+             "United Kingdom of Great Britain and Northern Ireland",
+             "Costa Rica")
+
 
 prices<-rawdata[rawdata$Country %in% countries,]
 
@@ -28,9 +38,13 @@ taxes_table <- tax_percent%>%
 
 #sum(is.na(taxes_table)) 0
 
-#Saving the updated table
-#write.table(taxes_table, 
-#            "../data/cigarette_taxes_2008-2020.txt", 
-#            sep = "\t")
+#Imputing value from 2007 from 2008 
+taxes_table[8,]<-taxes_table[taxes_table$Year=='2008',]
+taxes_table[8,1]<-2007
+
+#Saving the updated table with 2007 imputation
+write.table(taxes_table, 
+            "../data/cigarette_taxes_2007-2020.txt", 
+            sep = "\t")
 
 

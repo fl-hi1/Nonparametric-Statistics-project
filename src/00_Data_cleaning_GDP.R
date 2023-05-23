@@ -12,10 +12,14 @@ countries<-read.table("../data/OECD_countries_income_level",header=T)$Country
 countries<-c(countries,
              "Czechia", 
              "Republic of Korea",
+             "Korea",
              "Slovak Republic",
+             "Slovakia",
              "Türkiye",
              "United States of America",
-             "United Kingdom of Great Britain and Northern Ireland")
+             "United Kingdom of Great Britain and Northern Ireland",
+             "Costa Rica",
+             "Japan")
 
 GDP_measures<-rawdata[rawdata$Country %in% countries,c('Country','Year','Transaction','Value')]
 
@@ -39,8 +43,8 @@ GDP_table <- GDP %>%
 dim(GDP_table)
 
 #Saving the updated table
-#write.table(GDP_table, 
-#            "../data/GDP_2007-2020.txt", 
-#           sep = "\t")
+write.table(GDP_table, 
+            "../data/GDP_2007-2020.txt", 
+           sep = "\t")
 
 

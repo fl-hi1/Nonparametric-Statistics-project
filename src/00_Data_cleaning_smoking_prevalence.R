@@ -24,7 +24,7 @@ raw_prevalence_smoke<-raw_prevalence[raw_prevalence$GHO..DISPLAY.=="Estimate of 
 colnames(raw_prevalence_smoke)
 col_tokeep<-c("YEAR..DISPLAY.", "REGION..DISPLAY.","COUNTRY..DISPLAY.","SEX..DISPLAY.","Numeric")
 
-#@@Selection of relevant features
+#Selection of relevant features
 data=raw_prevalence_smoke[,col_tokeep]
 
 
@@ -37,9 +37,11 @@ countries<-c(countries,
              "Czechia", 
              "Republic of Korea",
              "Slovak Republic",
+             "Slovakia",
              "Türkiye",
              "United States of America",
-             "United Kingdom of Great Britain and Northern Ireland")
+             "United Kingdom of Great Britain and Northern Ireland",
+             "Costa Rica")
 #Saving
 write.table(OECD_names, "../data/OECD_countries_income_level", 
                         sep = "\t")
@@ -93,17 +95,17 @@ prevalence_female_table <- prevalence_female_table %>%
 prevalence_female_table
 
 #SAVING FILES
-#write.table(prevalence_female_table, 
-#            "../data/smoking_prevalence_f.txt", 
-#            sep = "\t")
-#
-#write.table(prevalence_male_table, 
-#            "../data/smoking_prevalence_m.txt", 
-#            sep = "\t")
-#
-#write.table(prevalence_both_table, 
-#            "../data/smoking_prevalence_b.txt", 
-#            sep = "\t")
+write.table(prevalence_female_table, 
+            "../data/smoking_prevalence_f.txt", 
+            sep = "\t")
+
+write.table(prevalence_male_table, 
+            "../data/smoking_prevalence_m.txt", 
+            sep = "\t")
+
+write.table(prevalence_both_table, 
+            "../data/smoking_prevalence_b.txt", 
+            sep = "\t")
 
 
 

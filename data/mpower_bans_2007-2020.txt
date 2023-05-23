@@ -1,0 +1,39 @@
+"Country"	"2020"	"2018"	"2016"	"2014"	"2012"	"2010"	"2008"	"2007"
+"1"	"Australia"	4	4	4	4	4	4	4	4
+"2"	"Austria"	4	4	4	4	4	4	4	4
+"3"	"Belgium"	4	4	4	4	4	4	4	4
+"4"	"Canada"	4	4	4	4	4	4	2	2
+"5"	"Chile"	4	4	4	4	4	4	4	4
+"6"	"Colombia"	5	5	5	5	5	5	2	2
+"7"	"Costa Rica"	4	4	4	4	4	2	2	2
+"8"	"Czechia"	4	4	4	4	4	4	4	4
+"9"	"Denmark"	4	4	4	4	4	4	4	4
+"10"	"Estonia"	4	4	4	4	4	4	4	4
+"11"	"Finland"	5	5	5	4	4	4	4	4
+"12"	"France"	4	4	4	4	4	4	4	4
+"13"	"Germany"	4	4	4	4	4	4	4	4
+"14"	"Greece"	4	4	4	4	4	4	4	4
+"15"	"Hungary"	4	4	4	4	4	4	4	4
+"16"	"Iceland"	5	5	5	5	5	5	5	5
+"17"	"Ireland"	4	4	4	4	4	4	4	4
+"18"	"Israel"	2	2	2	2	2	2	2	2
+"19"	"Italy"	4	4	4	4	4	4	4	4
+"20"	"Japan"	2	2	2	2	2	2	2	2
+"21"	"Latvia"	4	4	4	4	4	4	4	4
+"22"	"Lithuania"	4	4	4	4	4	4	4	4
+"23"	"Luxembourg"	4	4	4	4	4	4	4	4
+"24"	"Mexico"	2	2	2	2	2	2	2	2
+"25"	"Netherlands"	4	4	4	4	4	4	4	4
+"26"	"New Zealand"	4	4	4	4	4	4	4	4
+"27"	"Norway"	4	4	4	4	4	4	4	4
+"28"	"Poland"	4	4	4	4	4	4	4	4
+"29"	"Portugal"	4	4	4	4	4	4	4	4
+"30"	"Republic of Korea"	2	2	2	2	2	2	2	2
+"31"	"Slovakia"	4	4	4	4	4	4	4	4
+"32"	"Slovenia"	5	5	4	4	4	4	4	4
+"33"	"Spain"	5	5	5	5	5	5	4	4
+"34"	"Sweden"	4	4	4	4	4	4	4	4
+"35"	"Switzerland"	2	2	2	2	2	2	2	2
+"36"	"Türkiye"	5	5	5	5	5	4	4	2
+"37"	"United Kingdom of Great Britain and Northern Ireland"	4	4	4	4	4	4	4	4
+"38"	"United States of America"	2	2	2	2	2	2	2	2

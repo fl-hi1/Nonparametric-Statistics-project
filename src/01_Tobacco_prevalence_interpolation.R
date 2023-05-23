@@ -9,12 +9,12 @@ outputpath = "../data"
 library(fda)
 
 #####Read data and extract values and years, plus reordering years in the correct order
-
-rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_b.txt",header=T)
+######CHANGE HERE!
+#rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_b.txt",header=T)
 #rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_f.txt",header=T)
-#rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_m.txt",header=T)
+rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_m.txt",header=T)
 
-data<-rawdata[c(2:7,1),2:37]
+data<-rawdata[c(2:7,1),2:39]
 head(data)
 dim(data)
 years<-rawdata[c(2:7,1),1]
@@ -31,7 +31,7 @@ matplot(years,data,
         ylab="Age-standardized percent",
         main="Age-standardized smoking prevalence")
 
-countryrange<-1:36
+countryrange<-1:38
 
 for (i in countryrange){
   points(years, data[,i], pch = 20) # add blue points to second line
@@ -148,10 +148,12 @@ final_dataset <- final_dataset[order(rownames(final_dataset)),]
 #            "../datasmoking_prevalence_males_2007-2020.txt", 
 #            sep = "\t")
 #
+
 #write.table(final_dataset, 
 #            "../data/smoking_prevalence_females_2007-2020.txt", 
 #            sep = "\t")
 #
+
 #write.table(final_dataset, 
 #            "../data/smoking_prevalence_both_2007-2020.txt", 
 #            sep = "\t")
