@@ -1,4 +1,16 @@
+# Macbook
+*.DS_store
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Django stuff:
+*.log
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+#R stuff
 .Rproj.user
 .Rhistory
 .RData
-.Ruserdata
