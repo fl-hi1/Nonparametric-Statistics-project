@@ -149,7 +149,7 @@ colnames(prevalence_table2)[1]<-'Year'
 
 prevalence<- prevalence_table2 %>%
   pivot_longer(cols = -Year, names_to = "Country", 
-               values_to = "GDP")
+               values_to = "Prevalence")
 unique(prevalence$Country)
 
 prevalence[prevalence$Country=='Slovakia',2]<-'Slovak Republic'

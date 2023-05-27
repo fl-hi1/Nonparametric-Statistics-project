@@ -23,7 +23,7 @@ data_2016
 data_2018 = education[7,]
 data_2020 = education[8,]
 
-education = education[-c(1,7,8),]
+#education = education[-c(1,7,8),]
 
 education <- rbind(education,data_2016)
 education <- rbind(education,data_2018)

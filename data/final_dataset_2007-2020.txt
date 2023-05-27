@@ -1,4 +1,4 @@
-"Country"	"Year"	"GDP.x"	"GDP.y"	"Education"	"Affordability"	"Cig taxes"	"Campaigns"	"Help"	"Warn"	"Bans"	"Protect"
+"Country"	"Year"	"Prevalence"	"GDP"	"Education"	"Affordability"	"Cig taxes"	"Campaigns"	"Help"	"Warn"	"Bans"	"Protect"
 "1"	"Australia"	"2007"	19.892	44150.704999	46.2333333333333	1.95	9.6	5	5	5	4	5
 "2"	"Australia"	"2008"	19.312	44084.170067	46.2333333333333	1.95	9.6	5	5	5	4	5
 "3"	"Australia"	"2010"	18.2	44495.643202	46.2333333333333	1.95	11.98	5	5	5	4	5

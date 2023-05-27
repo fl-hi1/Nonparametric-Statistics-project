@@ -128,7 +128,7 @@ c(p_val_2007,
 
 s#Conclusion: 
 #the difference is significant for all years, so it may make sense to
-#include f/m as a factor in regression
+#perform two separate regressions
 
 
 #Question: is it better to do so or to run two different regressions separately?
