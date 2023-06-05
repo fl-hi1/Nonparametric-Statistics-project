@@ -73,3 +73,43 @@ camp.cl3a <- cutree(clusteraverage, k = 3)
 cl3a.lab <- factor(camp.cl3a, labels = paste("Cluster", 1:3))
 
 data_clustering['average_clustering'] = camp.cl3a
+
+#
+#
+#let's do it now for warm
+warn = fulldata[c("Country","Year","Warn")]
+data_seq = data.frame(matrix(ncol = 9, nrow = 0))
+
+
+
+for(count in countries){
+  sub_row = c(count,warn[warn$Country == count,]$Warn[-1])
+  data_seq = rbind(data_seq, sub_row)
+}
+u <- c("Country",seq(2008, 2020, by=2))
+colnames(data_seq)<- u
+
+#now let's define the parameter in order to create the sequence
+
+warn.alpha <- seq(1,5)
+warn.lab <- seq(1,5) #long label
+warn.scode <- seq(1,5) #short label, use by states argument
+warn.seq <- seqdef(data_seq, 2:8, alphabet = warn.alpha, states = warn.scode, labels = warn.lab)
+#then, let's compute the dissimilarity matrix with the Optimal matching with a proper distance
+z<- matrix(c(0,1,2,3,4,1,0,1,2,3,2,1,0,1,2,3,2,1,0,1,4,3,2,1,0), nrow = 5, ncol = 5, byrow = F)
+z
+warn.om <- seqdist(warn.seq, method = "OM", indel = 1, sm = z) #mi sambra buono =)
+
+#then, let's do clustering, first ward method
+clusterward <- agnes(warn.om, diss = TRUE, method = "ward")
+
+X11()
+plot(clusterward, ask=TRUE, which.plots=2) #let's do 3 cluster, clearly
+
+camp.cl3 <- cutree(clusterward, k = 2) 
+cl5.lab <- factor(camp.cl5, labels = paste("Cluster", 1:5))
+
+
+
+data_clustering = data_seq
+data_clustering['ward_clustering_on_warn_2'] = camp.cl3
