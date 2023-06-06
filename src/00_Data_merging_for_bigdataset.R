@@ -13,6 +13,11 @@ library(dplyr)
 #Beware that here we are extracting the sets from 2007 to 2020
 #With imputations
 prevalence_table<-read.table("../data/smoking_prevalence_both_2007-2020.txt",header=T, sep='',check.names = FALSE)
+
+prevalence_males_table<-read.table("../data/smoking_prevalence_males_2007-2020.txt",header=T, sep='',check.names = FALSE)
+prevalence_females_table<-read.table("../data/smoking_prevalence_females_2007-2020.txt",header=T, sep='',check.names = FALSE)
+
+
 affordability_table<-read.table("../data/affordability_2007-2020.txt",header=T, sep='',check.names = FALSE)
 taxes_table<-read.table("../data/cigarette_taxes_2007-2020.txt",header=T,sep='',check.names = FALSE)
 GDP_table<-read.table("../data/GDP_2007-2020.txt",header=T ,sep='',check.names = FALSE)
@@ -79,7 +84,7 @@ affordability <- affordability_table %>%
 
 taxes <- taxes_table %>%
   pivot_longer(cols = -Year, names_to = "Country", 
-               values_to = "Cig taxes")
+               values_to = "Cig_taxes")
 
 
 
@@ -149,7 +154,7 @@ colnames(prevalence_table2)[1]<-'Year'
 
 prevalence<- prevalence_table2 %>%
   pivot_longer(cols = -Year, names_to = "Country", 
-               values_to = "Prevalence")
+               values_to = "Prevalence_both")
 unique(prevalence$Country)
 
 prevalence[prevalence$Country=='Slovakia',2]<-'Slovak Republic'
@@ -160,11 +165,61 @@ prevalence[prevalence$Country=='United.States.of.America',2]<-'United States'
 prevalence[prevalence$Country=='Republic.of.Korea',2]<-'Korea'
 prevalence[prevalence$Country=='Costa.Rica',2]<-'Costa Rica'
 
-merged_all<-merge(prevalence,merged_gdp_edu_aff_taxes_power, 
+merged_all_both<-merge(prevalence,merged_gdp_edu_aff_taxes_power, 
                   by = c("Country", "Year"), 
                   all = TRUE)
 
+
+#Addint the heavy artillery! the prevalence of males
+rownames(prevalence_males_table)
+prevalence_males_table2<-cbind(rownames(prevalence_males_table),prevalence_males_table)
+colnames(prevalence_males_table2)[1]<-'Year'
+
+prevalence_m<- prevalence_males_table2 %>%
+  pivot_longer(cols = -Year, names_to = "Country", 
+               values_to = "Prevalence_males")
+unique(prevalence_m$Country)
+
+prevalence_m[prevalence_m$Country=='Slovakia',2]<-'Slovak Republic'
+prevalence_m[prevalence_m$Country=='New.Zealand',2]<-'New Zealand'
+prevalence_m[prevalence_m$Country=='Czechia',2]<-'Czech Republic'
+prevalence_m[prevalence_m$Country=='United.Kingdom.of.Great.Britain.and.Northern.Ireland',2]<-'United Kingdom'
+prevalence_m[prevalence_m$Country=='United.States.of.America',2]<-'United States'
+prevalence_m[prevalence_m$Country=='Republic.of.Korea',2]<-'Korea'
+prevalence_m[prevalence_m$Country=='Costa.Rica',2]<-'Costa Rica'
+
+
+merged_all_both_males<-merge(prevalence_m,merged_all_both, 
+                       by = c("Country", "Year"), 
+                       all = TRUE)
+
+
+#Addint the heavy artillery! the prevalence of females
+rownames(prevalence_females_table)
+prevalence_females_table2<-cbind(rownames(prevalence_females_table),prevalence_females_table)
+colnames(prevalence_females_table2)[1]<-'Year'
+
+prevalence_f<- prevalence_females_table2 %>%
+  pivot_longer(cols = -Year, names_to = "Country", 
+               values_to = "Prevalence_females")
+unique(prevalence_f$Country)
+
+prevalence_f[prevalence_f$Country=='Slovakia',2]<-'Slovak Republic'
+prevalence_f[prevalence_f$Country=='New.Zealand',2]<-'New Zealand'
+prevalence_f[prevalence_f$Country=='Czechia',2]<-'Czech Republic'
+prevalence_f[prevalence_f$Country=='United.Kingdom.of.Great.Britain.and.Northern.Ireland',2]<-'United Kingdom'
+prevalence_f[prevalence_f$Country=='United.States.of.America',2]<-'United States'
+prevalence_f[prevalence_f$Country=='Republic.of.Korea',2]<-'Korea'
+prevalence_f[prevalence_f$Country=='Costa.Rica',2]<-'Costa Rica'
+
+
+merged_all_both_males_females<-merge(prevalence_f,merged_all_both_males, 
+                             by = c("Country", "Year"), 
+                             all = TRUE)
+
+
+
 #Saving the updated table with 2007 imputation and the right names
-write.table(merged_all, 
+write.table(merged_all_both_males_females, 
             "../data/final_dataset_2007-2020.txt", 
             sep = "\t")

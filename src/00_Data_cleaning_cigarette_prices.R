@@ -25,16 +25,16 @@ prices<-rawdata[rawdata$Country %in% countries,]
 
 variables<-colnames(rawdata)[2:10]
 
-tax_percent=prices[,c(1,2,10)]
+tax_percent=prices[,c(1,2,8)]
 
-tax_percent$Most.sold.brand.of.cigarettes...price.in.currency.reported
+tax_percent$Most.sold.brand.of.cigarettes...taxes.as.a...of.price...total.tax
 
 # 
 library(tidyr)
 library(dplyr)
 taxes_table <- tax_percent%>%
   pivot_wider(names_from = Country, 
-              values_from = Most.sold.brand.of.cigarettes...price.in.currency.reported)
+              values_from = Most.sold.brand.of.cigarettes...taxes.as.a...of.price...total.tax)
 
 #sum(is.na(taxes_table)) 0
 

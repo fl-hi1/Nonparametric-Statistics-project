@@ -5,7 +5,6 @@ inputpath = "../data"
 outputpath = "../data"
 
 rawdata<-read.csv("../data/raw_datasets/GDP_OECD_2000-2023_quarterly_expenditure_approach_constant_prices_constant_PPP.csv",header=T)
-
 countries<-read.table("../data/OECD_countries_income_level",header=T)$Country
 
 #Adding manually the countries with slightly different names
