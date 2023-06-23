@@ -1,0 +1,1361 @@
+---
+title: "GAM_version_2_both"
+output: html_document
+date: "2023-06-07"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+#Do not run now
+rm(list=ls())
+```
+
+
+```{r}
+###Setting the working directory as the project directory
+setwd("~/Documents/GitHub/Nonparametric-Statistics-project/src")
+
+inputpath = "../data"
+outputpath = "../data"
+
+#Imports
+library(tidyr)
+library(dplyr)
+library(lme4)
+library(pbapply)
+library(mgcv)
+library(conformalInference)
+library(ggplot2)
+library(progress)
+library(parallel)
+library(pbapply)
+
+
+#Import data
+data<-read.table("../data/final_dataset_2007-2020.txt",
+                 header=T, 
+                 sep='',
+                 check.names = FALSE)
+
+
+#Logging the GDP
+data$GDP<-log(data$GDP)
+```
+
+Preliminary data visualization
+
+```{r}
+quartz()
+boxplot((data$GDP)~data$Country)
+boxplot(exp(data$GDP)~data$Year)
+```
+
+```{r}
+boxplot(data$Education~data$Country)
+boxplot(data$Education~data$Year)
+```
+
+```{r}
+data$Year<-as.numeric(data$Year)
+data$mpower_all=(data$Campaigns+data$Help+data$Warn+data$Bans+data$Protect)/25
+boxplot(data$mpower_all~data$Country)
+```
+
+
+```{r}
+#Check the variable type
+typeof(data$Year)
+typeof(data$GDP)
+typeof(data$Affordability)
+typeof(data$Prevalence_both)
+typeof(data$Cig_taxes)
+data$Country<-as.factor(data$Country)
+typeof(data$Country)
+#data$Cig_taxes<-data$Cig_taxes*100
+```
+
+
+```{r}
+# Try a different strategy: create lagged predictors
+
+data_gam<-data[data$Year!='2007',]
+
+lag_order<-1
+lagged_data <- data_gam
+for (i in 3:ncol(data_gam)) {
+  lagged_data[, i] <- c(rep(NA, lag_order), head(data_gam[, i], -lag_order))
+}
+
+#Removing 2008 - DO NOT RUN TWICE!
+lagged_data=lagged_data[lagged_data$Year!='2008',]
+lagged_data=lagged_data[lagged_data$Year!='2010',]
+lagged_data=lagged_data[lagged_data$Country!='Japan',]
+
+data_gam=data_gam[data_gam$Year!='2008',]
+data_gam=data_gam[data_gam$Year!='2010',]
+data_gam=data_gam[data_gam$Country!='Japan',]
+```
+
+Running the model 
+
+```{r}
+model_gam4 = mgcv::gam(
+                   data_gam$Prevalence_both ~ 
+                   
+                   data_gam$Cig_taxes+ 
+                   lagged_data$Cig_taxes + 
+                     
+                   data_gam$mpower_all+
+                   lagged_data$mpower_all
+                   
+                   s(data_gam$GDP, bs = 'cr') + 
+                   s(lagged_data$GDP, bs = 'cr') + 
+                   
+                   s(data_gam$Education, bs = 'cr') +
+                   s(lagged_data$Education, bs = 'cr') +
+                   
+                   s(data_gam$Affordability, bs='cr') +
+                   s(lagged_data$Affordability, bs='cr') 
+                 
+                  # data_gam$Country
+                  )
+
+quartz()
+par(mfrow = c(2,4))
+plot(model_gam4)
+```
+
+
+```{r}
+#Permutational inference to simplify the model---------------
+
+library(pbapply)
+library(mgcv)
+
+sum<-summary(model_gam4)
+#Table for nonparametric model part
+sum$s.table
+#Table for parametric model part
+head(sum$p.table)
+T.obs<-abs(sum$p.table[2,3]) #associated t value
+T.obs
+
+#H0: cig taxes do not impact
+gam.H0 = mgcv::gam(data_gam$Prevalence_both ~
+                     
+                     #no cig taxes, only lagged ones
+                     
+                     lagged_data$Cig_taxes + 
+                     
+                     data_gam$mpower_all+
+                     lagged_data$mpower_all+
+                     
+                     s(data_gam$GDP, bs = 'cr') + 
+                     s(lagged_data$GDP, bs = 'cr') + 
+                     
+                     s(data_gam$Education, bs = 'cr') +
+                     s(lagged_data$Education, bs = 'cr') +
+                     
+                     s(data_gam$Affordability, bs='cr') +
+                     s(lagged_data$Affordability, bs='cr') 
+                     
+                    # data_gam$Country
+)
+
+res.H0 = gam.H0$residuals
+plot(res.H0)
+hist(res.H0)
+```
+
+
+```{r}
+perm_wrapper = function() {
+  res.H0 = gam.H0$residuals
+  n<-length(res.H0)
+  permutation = sample(n)
+  res.H0.perm = res.H0[permutation] 
+  Y.perm.H0 = gam.H0$fitted + res.H0.perm 
+  #Full model with permuted residuals
+  gam.perm = mgcv::gam(
+    Y.perm.H0 ~  
+      
+      data_gam$Cig_taxes+ 
+      lagged_data$Cig_taxes + 
+      
+      data_gam$mpower_all +
+      lagged_data$mpower_all+
+    
+      s(data_gam$GDP, bs = 'cr') + 
+      s(lagged_data$GDP, bs = 'cr') + 
+      
+      s(data_gam$Education, bs = 'cr') +
+      s(lagged_data$Education, bs = 'cr') +
+      
+      s(data_gam$Affordability, bs='cr') +
+      s(lagged_data$Affordability, bs='cr') 
+  )
+  return(abs(summary(gam.perm)$p.table[2,3]))
+}
+
+
+B<-1000
+seed<-2023
+n_cores <- detectCores()
+cl = makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(DepthProc)))
+clusterExport(cl, varlist = list("perm_wrapper"))
+set.seed(seed)
+T2 <- pbreplicate(1000, perm_wrapper(), simplify='vector')
+stopCluster(cl)
+
+
+quartz()
+par(mfrow=c(2,1))
+hist(sort(T2)[-1000],
+     breaks = 100,
+     main = 'Permutational distribution of test statistics',
+     xlab = '')
+abline(v = T.obs, col = 'red', lwd = 4)
+
+plot(ecdf(sort(T2)[-1000]), main = 'ECDF of test statistics')
+abline(v = T.obs, col = 'red', lwd = 4)
+
+p_value=sum(T2>=T.obs)/1000
+p_value
+
+#As the model is extremely complex, I set the alpha of 0.1
+#So I cannot reject H0
+```
+
+#Now I can remove cig taxes
+
+
+
+```{r}
+#We cannot reject H0
+
+
+################################################
+###Now I perform on the lagged cig taxes
+################################################
+
+
+model_gam4 = mgcv::gam(
+    data_gam$Prevalence_both ~ 
+    
+    lagged_data$Cig_taxes + 
+    
+    data_gam$mpower_all+
+    lagged_data$mpower_all+
+    
+    s(data_gam$GDP, bs = 'cr') + 
+    s(lagged_data$GDP, bs = 'cr') + 
+    
+    s(data_gam$Education, bs = 'cr') +
+    s(lagged_data$Education, bs = 'cr') +
+    
+    s(data_gam$Affordability, bs='cr') +
+    s(lagged_data$Affordability, bs='cr') 
+)
+
+quartz()
+par(mfrow = c(2,4))
+plot(model_gam4)
+
+sum<-summary(model_gam4)
+#Table for nonparametric model part
+sum$s.table
+#Table for parametric model part
+head(sum$p.table)
+T.obs<-abs(sum$p.table[2,3]) #associated t value
+T.obs
+
+#H0: cig taxes do not impact
+gam.H0 = mgcv::gam(data_gam$Prevalence_both ~
+                     
+                     #no lagged cigtaxes
+
+                     data_gam$mpower_all+
+                     lagged_data$mpower_all+
+    
+
+                     s(data_gam$GDP, bs = 'cr') + 
+                     s(lagged_data$GDP, bs = 'cr') + 
+                     
+                     s(data_gam$Education, bs = 'cr') +
+                     s(lagged_data$Education, bs = 'cr') +
+                     
+                     s(data_gam$Affordability, bs='cr') +
+                     s(lagged_data$Affordability, bs='cr') 
+)
+
+res.H0 = gam.H0$residuals
+plot(res.H0)
+hist(res.H0)
+
+```
+
+
+```{r}
+perm_wrapper = function() {
+  res.H0 = gam.H0$residuals
+  n<-length(res.H0)
+  permutation = sample(n)
+  res.H0.perm = res.H0[permutation] 
+  Y.perm.H0 = gam.H0$fitted + res.H0.perm 
+  
+  #Full model with permuted residuals
+  gam.perm = mgcv::gam(
+    Y.perm.H0 ~  
+      
+      lagged_data$Cig_taxes+
+      
+      data_gam$mpower_all+
+      lagged_data$mpower_all+
+    
+      s(data_gam$GDP, bs = 'cr') + 
+      s(lagged_data$GDP, bs = 'cr') + 
+      
+      s(data_gam$Education, bs = 'cr') +
+      s(lagged_data$Education, bs = 'cr') +
+      
+      s(data_gam$Affordability, bs='cr') +
+      s(lagged_data$Affordability, bs='cr') 
+  )
+  
+  return(abs(summary(gam.perm)$p.table[2,3])) ###change here
+}
+
+
+B<-1000
+seed<-2023
+n_cores <- detectCores()
+cl = makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(DepthProc)))
+clusterExport(cl, varlist = list("perm_wrapper"))
+set.seed(seed)
+T2 <- pbreplicate(1000, perm_wrapper(), simplify='vector')
+stopCluster(cl)
+
+hist(sort(T2)[-1000],
+     breaks = 100,
+     main = 'Permutational distribution of test statistics',
+     xlab = '')
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+plot(ecdf(sort(T2)[-1000]), main = 'ECDF of test statistics')
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+p_value=sum(T2>=T.obs)/1000
+p_value
+#0 
+#I reject H0--> I cannot remove lagged cig
+```
+I cannot remove lagged cig
+
+```{r}
+#--------------------------------------------------
+# H0: Education is 0 ---------------
+#-------------------------------------------------
+
+model_gam4 = mgcv::gam(
+  data_gam$Prevalence_both ~ 
+    
+    lagged_data$Cig_taxes+
+      
+    data_gam$mpower_all+
+    lagged_data$mpower_all+
+    
+    s(data_gam$GDP, bs = 'cr') + 
+    s(lagged_data$GDP, bs = 'cr') + 
+    
+    s(data_gam$Education, bs = 'cr') +
+    s(lagged_data$Education, bs = 'cr') +
+    
+    s(data_gam$Affordability, bs='cr') +
+    s(lagged_data$Affordability, bs='cr')
+  
+)
+
+quartz()
+par(mfrow = c(2,4))
+plot(model_gam4)
+
+sum<-summary(model_gam4)
+#Table for nonparametric model part
+sum$s.table
+#Table for parametric model part
+head(sum$p.table)
+T.obs<-abs(sum$s.table[3,3]) #associated t value
+T.obs
+
+#H0: Education does not impact
+gam.H0 = mgcv::gam(data_gam$Prevalence_both ~
+                     
+                     lagged_data$Cig_taxes+
+                     
+                     data_gam$mpower_all+
+                     lagged_data$mpower_all+
+                     
+                     #no Education 
+                     s(lagged_data$Education, bs = 'cr') +
+                     
+                     s(data_gam$Affordability, bs='cr') +
+                     s(lagged_data$Affordability, bs='cr') 
+                   
+)
+
+res.H0 = gam.H0$residuals
+plot(res.H0)
+hist(res.H0)
+```
+
+
+```{r}
+perm_wrapper = function() {
+  res.H0 = gam.H0$residuals
+  n<-length(res.H0)
+  permutation = sample(n)
+  res.H0.perm = res.H0[permutation] 
+  Y.perm.H0 = gam.H0$fitted + res.H0.perm 
+  
+  #Full model with permuted residuals
+  gam.perm = mgcv::gam(
+    Y.perm.H0 ~  
+      
+      lagged_data$Cig_taxes+
+      
+      data_gam$mpower_all+
+      lagged_data$mpower_all+
+      
+      s(data_gam$GDP, bs = 'cr') + 
+      s(lagged_data$GDP, bs = 'cr') + 
+      
+      s(data_gam$Education, bs = 'cr') +
+      s(lagged_data$Education, bs = 'cr') +
+      
+      s(data_gam$Affordability, bs='cr') +
+      s(lagged_data$Affordability, bs='cr') 
+  
+  )
+  return(abs(summary(gam.perm)$s.table[3,3])) ###change here
+}
+```
+
+
+```{r}
+B<-1000
+seed<-2023
+n_cores <- detectCores()
+cl = makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(DepthProc)))
+clusterExport(cl, varlist = list("perm_wrapper"))
+set.seed(seed)
+T2 <- pbreplicate(1000, perm_wrapper(), simplify='vector')
+stopCluster(cl)
+
+hist(sort(T2)[-1000],
+     breaks = 100,
+     main = 'Permutational distribution of test statistics',
+     xlab = '')
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+plot(ecdf(sort(T2)[-1000]), main = 'ECDF of test statistics')
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+p_value=sum(T2>=T.obs)/1000
+p_value
+#0.117
+
+#I cannot reject H0
+```
+Now I remove education
+
+```{r}
+#I NOW REMOVE EDUCATION
+
+
+
+#--------------------------------------------------
+# H0: Lagged Education is 0 ---------------
+#-------------------------------------------------
+
+
+model_gam4 = mgcv::gam(
+  data_gam$Prevalence_both ~ 
+    
+    lagged_data$Cig_taxes + 
+    
+    data_gam$mpower_all +
+    lagged_data$mpower_all +
+  
+    s(data_gam$GDP, bs = 'cr') + 
+    s(lagged_data$GDP, bs = 'cr') + 
+    
+    s(lagged_data$Education, bs = 'cr') +
+    
+    s(data_gam$Affordability, bs='cr') +
+    s(lagged_data$Affordability, bs='cr') 
+)
+
+quartz()
+par(mfrow = c(2,4))
+plot(model_gam4)
+
+sum<-summary(model_gam4)
+#Table for nonparametric model part
+sum$s.table
+#Table for parametric model part
+head(sum$p.table)
+T.obs<-abs(sum$s.table[3,3]) #associated t value
+T.obs
+
+#H0: lagged education taxes do not impact
+gam.H0 = mgcv::gam(data_gam$Prevalence_both ~
+                     
+                     lagged_data$Cig_taxes +
+                     
+                     data_gam$mpower_all+
+                     lagged_data$mpower_all+
+
+                     s(data_gam$GDP, bs = 'cr') + 
+                     s(lagged_data$GDP, bs = 'cr') + 
+                     
+                     #no lagge Education 
+
+                     s(data_gam$Affordability, bs='cr') +
+                     s(lagged_data$Affordability, bs='cr') 
+)
+
+res.H0 = gam.H0$residuals
+plot(res.H0)
+hist(res.H0)
+
+
+perm_wrapper = function() {
+  res.H0 = gam.H0$residuals
+  n<-length(res.H0)
+  permutation = sample(n)
+  res.H0.perm = res.H0[permutation] 
+  Y.perm.H0 = gam.H0$fitted + res.H0.perm 
+  
+  #Full model with permuted residuals
+  gam.perm = mgcv::gam(
+    Y.perm.H0 ~  
+      
+      lagged_data$Cig_taxes +
+      data_gam$mpower_all+
+      lagged_data$mpower_all+  
+      
+      s(data_gam$GDP, bs = 'cr') + 
+      s(lagged_data$GDP, bs = 'cr') + 
+      
+      s(lagged_data$Education, bs = 'cr') +
+      
+      s(data_gam$Affordability, bs='cr') +
+      s(lagged_data$Affordability, bs='cr') 
+  )
+  return(abs(summary(gam.perm)$s.table[3,3])) ###change here
+}
+
+
+B<-1000
+seed<-2023
+n_cores <- detectCores()
+cl = makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(DepthProc)))
+clusterExport(cl, varlist = list("perm_wrapper"))
+set.seed(seed)
+T2 <- pbreplicate(1000, perm_wrapper(), simplify='vector')
+stopCluster(cl)
+```
+
+
+```{r}
+hist(sort(T2)[-1000],
+     breaks = 100,
+     main = 'Permutational distribution of test statistics',
+     xlab = '',xlim=c(0,12))
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+plot(ecdf(sort(T2)[-1000]), main = 'ECDF of test statistics')
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+p_value=sum(T2>=T.obs)/1000
+p_value
+# p- value is 0, lagged education has an impact!
+
+#H0 is rejected,
+#I cannot remove lagged edu
+```
+
+
+```{r}
+#--------------------------------------------------
+# H0: GDP is 0 ---------------
+#-------------------------------------------------
+
+
+model_gam4 = mgcv::gam(
+  data_gam$Prevalence_both ~ 
+    
+    lagged_data$Cig_taxes +
+    
+    data_gam$mpower_all+
+    lagged_data$mpower_all+ 
+    
+    s(data_gam$GDP, bs = 'cr') + 
+    s(lagged_data$GDP, bs = 'cr') + 
+    
+    s(lagged_data$Education, bs = 'cr') +
+    
+    s(data_gam$Affordability, bs='cr') +
+    s(lagged_data$Affordability, bs='cr')
+  
+)
+
+quartz()
+par(mfrow = c(2,4))
+plot(model_gam4)
+
+sum<-summary(model_gam4)
+#Table for nonparametric model part
+sum$s.table
+#Table for parametric model part
+head(sum$p.table)
+T.obs<-abs(sum$s.table[1,3]) #associated t value
+T.obs
+
+#H0: lagged education taxes do not impact
+gam.H0 = mgcv::gam(data_gam$Prevalence_both ~
+                     
+                    lagged_data$Cig_taxes +
+                    
+                     data_gam$mpower_all+
+                    lagged_data$mpower_all+ 
+        
+                     #No GDP
+                     s(lagged_data$GDP, bs = 'cr') + 
+                     
+                     s(lagged_data$Education, bs = 'cr') + 
+                     
+                     s(data_gam$Affordability, bs='cr') +
+                     s(lagged_data$Affordability, bs='cr') 
+)
+
+res.H0 = gam.H0$residuals
+plot(res.H0)
+hist(res.H0)
+```
+
+
+```{r}
+perm_wrapper = function() {
+  res.H0 = gam.H0$residuals
+  n<-length(res.H0)
+  permutation = sample(n)
+  res.H0.perm = res.H0[permutation] 
+  Y.perm.H0 = gam.H0$fitted + res.H0.perm 
+  
+  #Full model with permuted residuals
+  gam.perm = mgcv::gam(
+    Y.perm.H0 ~  
+      
+      lagged_data$Cig_taxes +
+      data_gam$mpower_all+
+      lagged_data$mpower_all+ 
+      
+      s(data_gam$GDP, bs = 'cr') + 
+      s(lagged_data$GDP, bs = 'cr') + 
+      
+      s(lagged_data$Education, bs = 'cr') +
+      
+      s(data_gam$Affordability, bs='cr') +
+      s(lagged_data$Affordability, bs='cr') 
+  )
+  return(abs(summary(gam.perm)$s.table[1,3])) ###change here
+}
+
+
+B<-1000
+seed<-2023
+n_cores <- detectCores()
+cl = makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(DepthProc)))
+clusterExport(cl, varlist = list("perm_wrapper"))
+set.seed(seed)
+T2 <- pbreplicate(1000, perm_wrapper(), simplify='vector')
+stopCluster(cl)
+```
+
+
+```{r}
+hist(sort(T2)[-1000],
+     breaks = 100,
+     main = 'Permutational distribution of test statistics',
+     xlab = '',xlim=c(0,12))
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+plot(ecdf(sort(T2)[-1000]), main = 'ECDF of test statistics')
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+p_value=sum(T2>=T.obs)/1000
+p_value
+#0.1
+#I cannot reject H0...
+```
+
+I remove GDP
+
+```{r}
+#--------------------------------------------------
+# H0: LAGGED GDP is 0 ---------------
+#-------------------------------------------------
+
+
+model_gam4 = mgcv::gam(
+  data_gam$Prevalence_both ~ 
+    
+    lagged_data$Cig_taxes +
+    
+    data_gam$mpower_all+
+    lagged_data$mpower_all+ 
+          
+    s(lagged_data$GDP, bs = 'cr') + 
+    
+    s(lagged_data$Education, bs = 'cr') +
+    
+    s(data_gam$Affordability, bs='cr') +
+    s(lagged_data$Affordability, bs='cr') 
+)
+
+quartz()
+par(mfrow = c(2,4))
+plot(model_gam4)
+
+sum<-summary(model_gam4)
+#Table for nonparametric model part
+sum$s.table
+#Table for parametric model part
+head(sum$p.table)
+T.obs<-abs(sum$s.table[1,3]) #associated t value
+T.obs
+
+#H0: lagged education taxes do not impact
+gam.H0 = mgcv::gam(data_gam$Prevalence_both ~
+                     
+ lagged_data$Cig_taxes +
+          data_gam$mpower_all+
+          lagged_data$mpower_all+ 
+                         
+          #No LAGGED GDP                     
+          s(lagged_data$Education, bs = 'cr') + 
+          
+          s(data_gam$Affordability, bs='cr') +
+          s(lagged_data$Affordability, bs='cr') 
+)
+
+res.H0 = gam.H0$residuals
+plot(res.H0)
+hist(res.H0)
+
+
+perm_wrapper = function() {
+  res.H0 = gam.H0$residuals
+  n<-length(res.H0)
+  permutation = sample(n)
+  res.H0.perm = res.H0[permutation] 
+  Y.perm.H0 = gam.H0$fitted + res.H0.perm 
+  
+  #Full model with permuted residuals
+  gam.perm = mgcv::gam(
+    Y.perm.H0 ~  
+      
+      lagged_data$Cig_taxes +
+      
+      data_gam$mpower_all+
+      lagged_data$mpower_all+ 
+            
+      s(lagged_data$GDP, bs = 'cr') + 
+      
+      s(lagged_data$Education, bs = 'cr') +
+      
+      s(data_gam$Affordability, bs='cr') +
+      s(lagged_data$Affordability, bs='cr') 
+  )
+  return(abs(summary(gam.perm)$s.table[1,3])) ###change here
+}
+
+
+B<-1000
+seed<-2023
+n_cores <- detectCores()
+cl = makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(DepthProc)))
+clusterExport(cl, varlist = list("perm_wrapper"))
+set.seed(seed)
+T2 <- pbreplicate(1000, perm_wrapper(), simplify='vector')
+stopCluster(cl)
+```
+
+
+```{r}
+hist(sort(T2)[-1000],
+     breaks = 100,
+     main = 'Permutational distribution of test statistics',
+     xlab = '',xlim=c(0,12))
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+plot(ecdf(sort(T2)[-1000]), main = 'ECDF of test statistics')
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+p_value=sum(T2>=T.obs)/1000
+p_value
+#0.002
+```
+
+So I can reject H0
+
+I cannot remove lagged GDP
+
+
+
+```{r}
+#--------------------------------------------------
+# H0: Affordability is 0 ---------------
+#-------------------------------------------------
+
+
+model_gam4 = mgcv::gam(
+  data_gam$Prevalence_both ~ 
+    
+    lagged_data$Cig_taxes +
+    
+    data_gam$mpower_all+
+    lagged_data$mpower_all+ 
+   
+    s(lagged_data$GDP, bs = 'cr') + 
+    
+    s(lagged_data$Education, bs = 'cr') +
+    
+    s(data_gam$Affordability, bs='cr') +
+    s(lagged_data$Affordability, bs='cr') 
+  
+)
+
+quartz()
+par(mfrow = c(2,4))
+plot(model_gam4)
+
+sum<-summary(model_gam4)
+#Table for nonparametric model part
+sum$s.table
+#Table for parametric model part
+head(sum$p.table)
+T.obs<-abs(sum$s.table[3,3]) #associated t value
+T.obs
+
+#H0: lagged education taxes do not impact
+gam.H0 = mgcv::gam(data_gam$Prevalence_both ~
+                     
+ lagged_data$Cig_taxes +
+          data_gam$mpower_all+
+          lagged_data$mpower_all+ 
+   
+          s(lagged_data$GDP, bs='cr') +
+
+          s(lagged_data$Education, bs = 'cr') + 
+          
+          #NO AFFORDABILITY s(data_gam$Affordability, bs='cr') +
+          s(lagged_data$Affordability, bs='cr') 
+)
+
+res.H0 = gam.H0$residuals
+plot(res.H0)
+hist(res.H0)
+
+
+perm_wrapper = function() {
+  res.H0 = gam.H0$residuals
+  n<-length(res.H0)
+  permutation = sample(n)
+  res.H0.perm = res.H0[permutation] 
+  Y.perm.H0 = gam.H0$fitted + res.H0.perm 
+  
+  #Full model with permuted residuals
+  gam.perm = mgcv::gam(
+    Y.perm.H0 ~  
+      
+      lagged_data$Cig_taxes +
+      
+      data_gam$mpower_all+
+      lagged_data$mpower_all+ 
+   
+      s(lagged_data$GDP, bs = 'cr') + 
+
+      s(lagged_data$Education, bs = 'cr') +
+      
+      s(data_gam$Affordability, bs='cr') +
+      s(lagged_data$Affordability, bs='cr') 
+  )
+  return(abs(summary(gam.perm)$s.table[3,3])) ###change here
+}
+
+
+B<-1000
+seed<-2023
+n_cores <- detectCores()
+cl = makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(DepthProc)))
+clusterExport(cl, varlist = list("perm_wrapper"))
+set.seed(seed)
+T2 <- pbreplicate(1000, perm_wrapper(), simplify='vector')
+stopCluster(cl)
+```
+
+
+```{r}
+hist(sort(T2)[-1000],
+     breaks = 100,
+     main = 'Permutational distribution of test statistics',
+     xlab = '',xlim=c(0,12))
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+plot(ecdf(sort(T2)[-1000]), main = 'ECDF of test statistics')
+abline(v = T.obs, col = 'red', lwd = 4)
+
+p_value=sum(T2>=T.obs)/1000
+p_value
+#I cannot reject H0
+```
+I reject H0 and do not remove aff
+
+
+```{r}
+#--------------------------------------------------
+# H0: Lagged Affordability is 0 ---------------
+#-------------------------------------------------
+
+
+model_gam4 = mgcv::gam(
+  data_gam$Prevalence_both ~ 
+    
+    lagged_data$Cig_taxes +
+    
+    data_gam$mpower_all+
+    lagged_data$mpower_all+ 
+   
+    s(lagged_data$GDP, bs = 'cr') + 
+    
+    s(lagged_data$Education, bs = 'cr') +
+    
+    s(lagged_data$Affordability, bs='cr') +
+
+    s(data_gam$Affordability, bs='cr') 
+)
+
+quartz()
+par(mfrow = c(2,4))
+plot(model_gam4)
+
+sum<-summary(model_gam4)
+#Table for nonparametric model part
+sum$s.table
+#Table for parametric model part
+head(sum$p.table)
+T.obs<-abs(sum$s.table[4,3]) #associated t value
+T.obs
+
+#H0: lagged affordability taxes do not impact
+gam.H0 = mgcv::gam(
+        data_gam$Prevalence_both ~
+                     
+        lagged_data$Cig_taxes + 
+          
+        data_gam$mpower_all+
+        lagged_data$mpower_all+
+                     
+        s(lagged_data$GDP, bs='cr') +
+                     
+        s(lagged_data$Education, bs = 'cr') + 
+                     
+        s(data_gam$Affordability, bs = 'cr')
+)
+
+res.H0 = gam.H0$residuals
+plot(res.H0)
+hist(res.H0)
+```
+
+
+```{r}
+perm_wrapper = function() {
+  res.H0 = gam.H0$residuals
+  n<-length(res.H0)
+  permutation = sample(n)
+  res.H0.perm = res.H0[permutation] 
+  Y.perm.H0 = gam.H0$fitted + res.H0.perm 
+  
+  #Full model with permuted residuals
+  gam.perm = mgcv::gam(
+    Y.perm.H0 ~  
+      
+      lagged_data$Cig_taxes + 
+      
+      data_gam$mpower_all+
+      lagged_data$mpower_all+  
+      
+      s(lagged_data$GDP, bs = 'cr') + 
+      
+      s(lagged_data$Education, bs = 'cr') +
+            
+      s(data_gam$Affordability, bs='cr')+
+      s(lagged_data$Affordability, bs='cr')
+  )
+  return(abs(summary(gam.perm)$s.table[4,3])) ###change here
+}
+
+
+B<-1000
+seed<-2023
+n_cores <- detectCores()
+cl = makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(DepthProc)))
+clusterExport(cl, varlist = list("perm_wrapper"))
+set.seed(seed)
+T2 <- pbreplicate(1000, perm_wrapper(), simplify='vector')
+stopCluster(cl)
+```
+
+
+```{r}
+hist(sort(T2)[-1000],
+     breaks = 100,
+     main = 'Permutational distribution of test statistics',
+     xlab = '',xlim=c(0,12))
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+plot(ecdf(sort(T2)[-1000]), main = 'ECDF of test statistics')
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+p_value=sum(T2>=T.obs)/1000
+p_value
+
+```
+
+
+
+```{r}
+#--------------------------------------------------
+# H0: Mpower (this...) is 0 ---------------
+#-------------------------------------------------
+
+model_gam4 = mgcv::gam(
+    data_gam$Prevalence_both ~ 
+    
+    lagged_data$Cig_taxes + 
+      
+    data_gam$mpower_all+
+    lagged_data$mpower_all+  
+    
+    s(lagged_data$GDP, bs = 'cr') + 
+    
+    s(lagged_data$Education, bs = 'cr') +
+      
+    s(data_gam$Affordability, bs='cr') +
+    s(lagged_data$Affordability, bs='cr') 
+)
+
+quartz()
+par(mfrow = c(2,3))
+plot(model_gam4)
+
+sum<-summary(model_gam4)
+#Table for nonparametric model part
+sum$s.table
+#Table for parametric model part
+head(sum$p.table)
+T.obs<-abs(sum$p.table[3,3]) #associated t value
+T.obs
+
+#H0: mpower do not impact
+gam.H0 = mgcv::gam(data_gam$Prevalence_both ~
+                     
+                    
+          lagged_data$Cig_taxes + 
+          
+          lagged_data$mpower_all+  
+    
+           s(lagged_data$GDP, bs = 'cr') + 
+                    
+           s(lagged_data$Education, bs = 'cr') + 
+            
+           s(data_gam$Affordability, bs='cr') +
+           s(lagged_data$Affordability, bs = 'cr') 
+)
+
+res.H0 = gam.H0$residuals
+plot(res.H0)
+hist(res.H0)
+
+
+perm_wrapper = function() {
+  res.H0 = gam.H0$residuals
+  n<-length(res.H0)
+  permutation = sample(n)
+  res.H0.perm = res.H0[permutation] 
+  Y.perm.H0 = gam.H0$fitted + res.H0.perm 
+  
+  #Full model with permuted residuals
+  gam.perm = mgcv::gam(
+    Y.perm.H0 ~  
+          
+          lagged_data$Cig_taxes + 
+            
+          data_gam$mpower_all+  
+
+          lagged_data$mpower_all+  
+      
+          s(lagged_data$GDP, bs = 'cr') + 
+          
+          s(lagged_data$Education, bs = 'cr') + 
+      
+          s(data_gam$Affordability, bs='cr') +
+          s(lagged_data$Affordability, bs = 'cr') 
+  )
+  return(abs(summary(gam.perm)$p.table[3,3])) ###change here
+}
+
+
+B<-1000
+seed<-2023
+n_cores <- detectCores()
+cl = makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(DepthProc)))
+clusterExport(cl, varlist = list("perm_wrapper"))
+set.seed(seed)
+T2 <- pbreplicate(1000, perm_wrapper(), simplify='vector')
+stopCluster(cl)
+
+hist(sort(T2)[-1000],
+     breaks = 100,
+     main = 'Permutational distribution of test statistics',
+     xlab = '',xlim=c(0,12))
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+plot(ecdf(sort(T2)[-1000]), main = 'ECDF of test statistics')
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+p_value=sum(T2>=T.obs)/1000
+p_value
+```
+#I can remove H0
+
+```{r}
+#--------------------------------------------------
+# H0: LAGGED MPOWER (this...) is 0 ---------------
+#-------------------------------------------------
+
+
+
+model_gam4 = mgcv::gam(
+  data_gam$Prevalence_both ~ 
+    
+      lagged_data$Cig_taxes + 
+
+      lagged_data$mpower_all+  
+      
+      s(lagged_data$GDP, bs = 'cr') + 
+    
+      s(lagged_data$Education, bs = 'cr') +
+    
+      s(data_gam$Affordability, bs='cr') +
+      s(lagged_data$Affordability, bs='cr') 
+)
+
+quartz()
+par(mfrow = c(2,3))
+plot(model_gam4)
+
+sum<-summary(model_gam4)
+#Table for nonparametric model part
+sum$s.table
+#Table for parametric model part
+head(sum$p.table)
+T.obs<-abs(sum$s.table[3,3]) #associated t value
+T.obs
+
+#H0: lagged education taxes do not impact
+gam.H0 = mgcv::gam(data_gam$Prevalence_both ~
+                     
+                     lagged_data$Cig_taxes + 
+                     
+                     s(lagged_data$GDP, bs='cr') +
+                     
+                     s(lagged_data$Education, bs = 'cr') + 
+                    
+                     s(data_gam$Affordability, bs = 'cr')+ 
+                     s(lagged_data$Affordability, bs = 'cr') 
+
+)
+
+res.H0 = gam.H0$residuals
+plot(res.H0)
+hist(res.H0)
+
+
+perm_wrapper = function() {
+  res.H0 = gam.H0$residuals
+  n<-length(res.H0)
+  permutation = sample(n)
+  res.H0.perm = res.H0[permutation] 
+  Y.perm.H0 = gam.H0$fitted + res.H0.perm 
+  
+  #Full model with permuted residuals
+  gam.perm = mgcv::gam(
+    Y.perm.H0 ~  
+      
+      lagged_data$Cig_taxes +
+      
+      lagged_data$mpower_all +
+
+      s(lagged_data$GDP, bs = 'cr') + 
+      
+      s(lagged_data$Education, bs = 'cr') +
+      
+      s(data_gam$Affordability, bs = 'cr')+ 
+      s(lagged_data$Affordability, bs = 'cr') 
+  )
+  return(abs(summary(gam.perm)$p.table[3,3])) ###change here
+}
+
+
+B<-1000
+seed<-2023
+n_cores <- detectCores()
+cl = makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(DepthProc)))
+clusterExport(cl, varlist = list("perm_wrapper"))
+set.seed(seed)
+T2 <- pbreplicate(1000, perm_wrapper(), simplify='vector')
+stopCluster(cl)
+```
+
+
+```{r}
+hist(sort(T2)[-1000],
+     breaks = 100,
+     main = 'Permutational distribution of test statistics',
+     xlab = '',xlim=c(0,12))
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+plot(ecdf(sort(T2)[-1000]), main = 'ECDF of test statistics')
+abline(v = T.obs, col = 'red', lwd = 4)
+
+
+p_value=sum(T2>=T.obs)/1000
+p_value
+#I can reject H0: need to keep mpower
+
+
+
+
+#So my model is now that
+```
+
+```{r}
+#Obtained model
+final_model = mgcv::gam(
+    data_gam$Prevalence_both ~ 
+    
+    lagged_data$Cig_taxes + 
+    
+    lagged_data$mpower_all+  
+      
+    s(lagged_data$GDP, bs = 'cr') + 
+    
+    s(lagged_data$Education, bs = 'cr') +
+
+    s(data_gam$Affordability, bs='cr') +
+    s(lagged_data$Affordability, bs='cr') 
+)
+
+summary(final_model)
+
+par(mfrow=c(2,2))
+plot(final_model)
+```
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+#--------------------------------------------------
+#Running the model for females only ---------------
+#-------------------------------------------------
+
+set.seed(1)
+model_gam = mgcv::gam(data_gam$Prevalence_females ~
+                        
+                        data_gam$Cig_taxes+ 
+                        lagged_data$Cig_taxes + 
+                        
+                        s(data_gam$GDP, bs = 'cr') + 
+                        s(lagged_data$GDP, bs = 'cr') + 
+                        
+                        s(data_gam$Education, bs='cr') +
+                        s(lagged_data$Education, bs='cr') +
+                        
+                        s(data_gam$Affordability, bs='cr') +
+                        s(lagged_data$Affordability, bs='cr') +
+                        
+                        s(data_gam$mpower_all, bs='cr') +
+                        s(lagged_data$mpower_all, bs='cr'), 
+                      data=data_gam
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Running the model for males only---------------
+
+```
+

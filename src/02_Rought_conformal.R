@@ -18,10 +18,12 @@ rawdata_b<-read.table("../data/semiprocessed_datasets/smoking_prevalence_b.txt",
 
 years<-rawdata_f$YEAR..DISPLAY.
 
-y_f_list=c(rawdata_f[,2:37])
+y_f_list=c(rawdata_f[rawdata_f$YEAR..DISPLAY.=='2020',2:37])
 y_f<-unlist(y_f_list)
 n<-length(y_f)
 plot(y_f)
+
+hist(y_f)
 
 #Selecting grid parameters
 grid_factor = 1.5
@@ -66,7 +68,7 @@ index_in = pval_fun > alpha
 pred_t_interval = range(test_grid[index_in])
 pred_t_interval 
 
-
+# FOR ALL YEARS
 # FEMALES 6.845729 33.868342 
 # MALES 13.13045 46.32820  
 # BOTH 12.58985 37.56316
@@ -76,11 +78,11 @@ plot_pval(test_grid, pval_fun, pred_t_interval, alpha)
 
 
 
-
 ## Using KNN distance
 pval_fun = numeric(n_grid)
-k = 1 ########RAGIONARE SU COME SETTARE IL K - per ora 
+k = 0.3 ########RAGIONARE SU COME SETTARE IL K - per ora 
 # selezionato uno con una discreta smoothness
+#è una percentage!!!
 
 wrapper_knn = function(grid_point) {
   aug_y = c(grid_point, y_f)
@@ -124,7 +126,7 @@ plot_pval(test_grid, pval_fun, pred_mahalanobis, alpha)
 #Plot histogram of target variable
 hist(
   y_f,
-  breaks = 30,
+  breaks = 10,
   freq = FALSE,
   main = 'Histogram of Smoking prevalence',
   xlab = 'Smoking prevalence',
@@ -141,3 +143,4 @@ legend("topright",
        legend = c("T Prediction Interval", "Mahalanobis", "KNN (k=1)"),
        fill = c("red", "orange", "blue"))
 shapiro.test(y_f)
+

@@ -20,13 +20,14 @@ library(robustbase)
 #Read data and add column which will be used for labelling
 data<-read.table("../data/final_dataset_2007-2020.txt",header=T, sep='',check.names = FALSE)
 
+data<-data[data$Year=='2020',]
 data$Cig_taxes=data$Cig_taxes*100
 data$merged<-paste(data$Country, "_", data$Year) #for text
 data$mpower_all=(data$Campaigns+data$Help+data$Warn+data$Bans+data$Protect)/25
 
 
 # Multivariate case
-bagplot_matrix <- aplpack::bagplot.pairs(data[,c(3,4,5,6,7,8,9)])
+bagplot_matrix <- aplpack::bagplot.pairs(data[data$Year=='2020',c(3,4,5,6,7,8,9)])
 #Comment:I use this bagplot to identify variables and countries with strange behaviour
 
 
