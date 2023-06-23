@@ -97,7 +97,6 @@ MHI_f <- MHI(f_data)
 hist(MHI_f)
 
 
-#Choosing 20% and 80% as quantiles
 #20% is based on the number of outliers in MHI, 80% is by eye
 #MBD_quantiles<-quantile(MBD_f, probs=c(0.10,0.75))
 MHI_quantiles<-quantile(MHI_f, probs=c(0.10,0.5,0.9))

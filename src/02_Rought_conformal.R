@@ -59,7 +59,7 @@ plot_pval = function(test_grid, pval_fun, pred, alpha) {
 wrapper_full = function(grid_point) {
   aug_y = c(grid_point, y_f)
   mu = mean(aug_y)
-  ncm = abs(mu - aug_y)
+  ncm = abs(mu - aug_y)###
   sum((ncm[-1] >= ncm[1])) / (n + 1)
 }
 
@@ -140,7 +140,7 @@ abline(v = jitter(pred_mahalanobis, amount=0.03), col = 'orange', lwd = 2)
 abline(v = jitter(pred_knn, amount=0.03), col = 'blue', lwd = 2)
 
 legend("topright",
-       legend = c("T Prediction Interval", "Mahalanobis", "KNN (k=1)"),
+       legend = c("T Prediction Interval", "Mahalanobis", "KNN (k=0.3)"),
        fill = c("red", "orange", "blue"))
 shapiro.test(y_f)
 

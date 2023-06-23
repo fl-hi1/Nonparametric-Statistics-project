@@ -288,7 +288,6 @@ plot(edu_female_f) # what happens if I do plot(data)?
 #lines(grid,m, col="black", lwd=5)
 
 
-
 education_females[education_females$Country=='Slovakia',2]<-'Slovak Republic'
 education_females[education_females$Country=='New.Zealand',2]<-'New Zealand'
 education_females[education_females$Country=='Czechia',2]<-'Czech Republic'

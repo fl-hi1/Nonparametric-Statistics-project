@@ -126,7 +126,7 @@ c(p_val_2007,
   p_val_2020)
 
 
-s#Conclusion: 
+#Conclusion: 
 #the difference is significant for all years, so it may make sense to
 #perform two separate regressions
 

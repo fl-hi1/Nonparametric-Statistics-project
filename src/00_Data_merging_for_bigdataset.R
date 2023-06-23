@@ -92,7 +92,6 @@ merged_mpower <- merge(merged_mpower,
 
 
 
-
 ######Converting back GDP, education data
 GDP <- GDP_table %>%
   pivot_longer(cols = -Year, names_to = "Country", 
