@@ -96,7 +96,11 @@ warn.lab <- seq(1,5) #long label
 warn.scode <- seq(1,5) #short label, use by states argument
 warn.seq <- seqdef(data_seq, 2:8, alphabet = warn.alpha, states = warn.scode, labels = warn.lab)
 #then, let's compute the dissimilarity matrix with the Optimal matching with a proper distance
-z<- matrix(c(0,1,2,3,4,1,0,1,2,3,2,1,0,1,2,3,2,1,0,1,4,3,2,1,0), nrow = 5, ncol = 5, byrow = F)
+z<- matrix(c(0,1,2,3,4,
+             1,0,1,2,3,
+             2,1,0,1,2,
+             3,2,1,0,1,
+             4,3,2,1,0), nrow = 5, ncol = 5, byrow = F)
 z
 warn.om <- seqdist(warn.seq, method = "OM", indel = 1, sm = z) #mi sambra buono =)
 
@@ -110,6 +114,21 @@ camp.cl3 <- cutree(clusterward, k = 2)
 cl5.lab <- factor(camp.cl5, labels = paste("Cluster", 1:5))
 
 
-
-data_clustering = data_seq
 data_clustering['ward_clustering_on_warn_2'] = camp.cl3
+
+#let's do it for the sum now
+
+total = fulldata[c("Country","Year","Campaigns","Help","Warn","Bans","Protect")]
+data_seq = data.frame()
+
+
+
+for(count in countries){
+  sub_row_val = c(total[total$Country == count,]$Warn[-1]) +  c(total[total$Country == count,]$Help[-1])+  c(total[total$Country == count,]$Campaigns[-1]) +  c(total[total$Country == count,]$Bans[-1])+  c(total[total$Country == count,]$Protect[-1])
+  sub_row = c(count, sub_row_val)
+  data_seq = rbind(data_seq, sub_row)
+}
+u <- c("Country",seq(2008, 2020, by=2))
+colnames(data_seq)<- u
+
+
