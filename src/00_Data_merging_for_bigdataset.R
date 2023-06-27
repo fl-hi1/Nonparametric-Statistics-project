@@ -9,20 +9,42 @@ outputpath = "../data"
 library(tidyr)
 library(dplyr)
 
-#Extracting rawdata- 
-#Beware that here we are extracting the sets from 2007 to 2020
-#With imputations
-prevalence_table<-read.table("../data/smoking_prevalence_both_2007-2020.txt",header=T, sep='',check.names = FALSE)
-affordability_table<-read.table("../data/affordability_2007-2020.txt",header=T, sep='',check.names = FALSE)
-taxes_table<-read.table("../data/cigarette_taxes_2007-2020.txt",header=T,sep='',check.names = FALSE)
+
+#Adding socioeconomic data
 GDP_table<-read.table("../data/GDP_2007-2020.txt",header=T ,sep='',check.names = FALSE)
 education_table<-read.table("../data/education_both_2007-2020.txt",header=T,sep='',check.names = FALSE)
 colnames(education_table)[1]<-"Year"
+education_females_rough<-read.table("../data/education_female_2007-2020.txt",
+                                    header=T, 
+                                    sep='',
+                                    check.names = FALSE)
+education_males_rough<-read.table("../data/education_male_2007-2020.txt",
+                                    header=T, 
+                                    sep='',
+                                    check.names = FALSE)
+HDI_MHI<-read.table("../data/HDI_2007-2020.txt",header=T, sep='',check.names = FALSE)
+
+
+#Extracting SMOKING PREVALENCE, cig taxes and affordability- 
+#Beware that here we are extracting the sets from 2007 to 2020
+#With imputations
+prevalence_table<-read.table("../data/smoking_prevalence_both_2007-2020.txt",header=T, sep='',check.names = FALSE)
+prevalence_males_table<-read.table("../data/smoking_prevalence_males_2007-2020.txt",header=T, sep='',check.names = FALSE)
+prevalence_females_table<-read.table("../data/smoking_prevalence_females_2007-2020.txt",header=T, sep='',check.names = FALSE)
+
+affordability_table<-read.table("../data/affordability_2007-2020.txt",header=T, sep='',check.names = FALSE)
+taxes_table<-read.table("../data/cigarette_taxes_2007-2020.txt",header=T,sep='',check.names = FALSE)
+
+
+#Adding MPOWER data
 bans_table<-read.table("../data/mpower_bans_2007-2020.txt",header=T,sep='',check.names = FALSE)
 warn_table<-read.table("../data/mpower_warn_2007-2020.txt",header=T,sep='',check.names = FALSE)
 help_table<-read.table("../data/mpower_help_2007-2020.txt",header=T,sep='',check.names = FALSE)
 protect_table<-read.table("../data/mpower_protect_2007-2020.txt",header=T,sep='',check.names = FALSE)
 campaigns_table<-read.table("../data/mpower_campaigns_2007-2020.txt",header=T,sep='',check.names = FALSE)
+monitor_table<-read.table("../data/mpower_monitor_2007-2020.txt",header=T,sep='',check.names = FALSE)
+
+
 
 
 ############Converting back MPOWER DATA
@@ -41,8 +63,9 @@ help <- help_table %>%
 bans <- bans_table %>%
   pivot_longer(cols = -Country, names_to = "Year", 
                values_to = "Bans")
-
-
+monitor <- monitor_table %>%
+  pivot_longer(cols = -Country, names_to = "Year", 
+               values_to = "Monitor")
 
 ####MERGE ALL NPOWER DATA
 ####DO NOT RUN TWICE!
@@ -62,16 +85,29 @@ merged_mpower <- merge(merged_mpower,
                        protect,
                        by = c("Country", "Year"), 
                        all = TRUE)
+merged_mpower <- merge(merged_mpower, 
+                       monitor,
+                       by = c("Country", "Year"), 
+                       all = TRUE)
 
 
 
-#Converting back GDP, education data
+######Converting back GDP, education data
 GDP <- GDP_table %>%
   pivot_longer(cols = -Year, names_to = "Country", 
                values_to = "GDP")
+
 education <- education_table %>%
   pivot_longer(cols = -Year, names_to = "Country", 
                values_to = "Education")
+
+education_f <- education_females_rough %>%
+  pivot_longer(cols = -Year, names_to = "Country", 
+               values_to = "Education_females")
+
+education_m <- education_males_rough %>%
+  pivot_longer(cols = -Year, names_to = "Country", 
+               values_to = "Education_males")
 
 affordability <- affordability_table %>%
   pivot_longer(cols = -Year, names_to = "Country", 
@@ -79,41 +115,58 @@ affordability <- affordability_table %>%
 
 taxes <- taxes_table %>%
   pivot_longer(cols = -Year, names_to = "Country", 
-               values_to = "Cig taxes")
+               values_to = "Cig_taxes")
 
 
+taxes <- taxes_table %>%
+  pivot_longer(cols = -Year, names_to = "Country", 
+               values_to = "Cig_taxes")
 
 
 
 WHO_names<-colnames(taxes_table)
 OECD_names<-colnames(GDP_table)
+OECD2_names<-HDI_MHI[,1]
 
 #I WILL USE THE OECD NAMES
-
 setdiff(WHO_names,OECD_names)
 setdiff(OECD_names,WHO_names)
+
+setdiff(OECD2_names,OECD_names)
+setdiff(OECD_names,OECD2_names)
+
 
 merged_mpower[merged_mpower$Country=='Slovakia',1]<-'Slovak Republic'
 affordability[affordability$Country=='Slovakia',2]<-'Slovak Republic'
 taxes[taxes$Country=='Slovakia',2]<-'Slovak Republic'
+HDI_MHI[HDI_MHI$country=='Slovakia',1]<-'Slovak Republic'
 
 merged_mpower[merged_mpower$Country=='Czechia',1]<-'Czech Republic'
 affordability[affordability$Country=='Czechia',2]<-'Czech Republic'
 taxes[taxes$Country=='Czechia',2]<-'Czech Republic'
+HDI_MHI[HDI_MHI$country=='Czechia',1]<-'Czech Republic'
 
 merged_mpower[merged_mpower$Country=='United Kingdom of Great Britain and Northern Ireland',1]<-'United Kingdom'
 affordability[affordability$Country=='United Kingdom of Great Britain and Northern Ireland',2]<-'United Kingdom'
 taxes[taxes$Country=='United Kingdom of Great Britain and Northern Ireland',2]<-'United Kingdom'
 
-
 merged_mpower[merged_mpower$Country=='United States of America',1]<-'United States'
 affordability[affordability$Country=='United States of America',2]<-'United States'
 taxes[taxes$Country=='United States of America',2]<-'United States'
 
-
 merged_mpower[merged_mpower$Country=='Republic of Korea',1]<-'Korea'
 affordability[affordability$Country=='Republic of Korea',2]<-'Korea'
 taxes[taxes$Country=='Republic of Korea',2]<-'Korea'
+HDI_MHI[HDI_MHI$country=='Korea (Republic of)',1]<-'Korea'
+
+HDI_MHI[HDI_MHI$country=="Turkey",1]<-'Türkiye'
+
+
+HDI_MHI_val<-HDI_MHI[,c(1,10)]
+colnames(HDI_MHI_val)<-c("Country" ,"HDI_MHI")
+HDI_MHI_clust<-HDI_MHI[,c(1,11)]
+colnames(HDI_MHI_clust)<-c("Country" ,"HDI_MHI_clustering")
+
 
 #Saving the updated table with 2007 imputation and the right names
 write.table(merged_mpower, 
@@ -127,7 +180,17 @@ merged_gdp_edu<-merge(GDP,
                       by = c("Country", "Year"), 
                       all = TRUE)
 
-merged_gdp_edu_aff<-merge(merged_gdp_edu, 
+merged_gdp_edu_f<-merge(merged_gdp_edu, 
+                      education_f,
+                      by = c("Country", "Year"), 
+                      all = TRUE)
+
+merged_gdp_edu_m<-merge(merged_gdp_edu_f, 
+                        education_m,
+                        by = c("Country", "Year"), 
+                        all = TRUE)
+
+merged_gdp_edu_aff<-merge(merged_gdp_edu_m, 
                       affordability,
                       by = c("Country", "Year"), 
                       all = TRUE)
@@ -142,14 +205,25 @@ merged_gdp_edu_aff_taxes_power<-merge(merged_gdp_edu_aff_taxes,
                                       by = c("Country", "Year"), 
                                       all = TRUE)
 
-#Addint the heavy artillery! the prevalence
+merged_gdp_edu_aff_taxes_power_MHI<-merge(merged_gdp_edu_aff_taxes_power, 
+                                      HDI_MHI_val,
+                                      by = c("Country"), 
+                                      all = TRUE)
+
+merged_gdp_edu_aff_taxes_power_MHI_clust<-merge(merged_gdp_edu_aff_taxes_power_MHI, 
+                                          HDI_MHI_clust,
+                                          by = c("Country"), 
+                                          all = TRUE)
+
+
+#Adding the heavy artillery! the prevalence
 rownames(prevalence_table)
 prevalence_table2<-cbind(rownames(prevalence_table),prevalence_table)
 colnames(prevalence_table2)[1]<-'Year'
 
 prevalence<- prevalence_table2 %>%
   pivot_longer(cols = -Year, names_to = "Country", 
-               values_to = "Prevalence")
+               values_to = "Prevalence_both")
 unique(prevalence$Country)
 
 prevalence[prevalence$Country=='Slovakia',2]<-'Slovak Republic'
@@ -160,11 +234,63 @@ prevalence[prevalence$Country=='United.States.of.America',2]<-'United States'
 prevalence[prevalence$Country=='Republic.of.Korea',2]<-'Korea'
 prevalence[prevalence$Country=='Costa.Rica',2]<-'Costa Rica'
 
-merged_all<-merge(prevalence,merged_gdp_edu_aff_taxes_power, 
+merged_all_both<-merge(prevalence,merged_gdp_edu_aff_taxes_power_MHI_clust, 
                   by = c("Country", "Year"), 
                   all = TRUE)
 
+
+#Adding the heavy artillery! the prevalence of males
+rownames(prevalence_males_table)
+prevalence_males_table2<-cbind(rownames(prevalence_males_table),prevalence_males_table)
+colnames(prevalence_males_table2)[1]<-'Year'
+
+prevalence_m<- prevalence_males_table2 %>%
+  pivot_longer(cols = -Year, names_to = "Country", 
+               values_to = "Prevalence_males")
+unique(prevalence_m$Country)
+
+prevalence_m[prevalence_m$Country=='Slovakia',2]<-'Slovak Republic'
+prevalence_m[prevalence_m$Country=='New.Zealand',2]<-'New Zealand'
+prevalence_m[prevalence_m$Country=='Czechia',2]<-'Czech Republic'
+prevalence_m[prevalence_m$Country=='United.Kingdom.of.Great.Britain.and.Northern.Ireland',2]<-'United Kingdom'
+prevalence_m[prevalence_m$Country=='United.States.of.America',2]<-'United States'
+prevalence_m[prevalence_m$Country=='Republic.of.Korea',2]<-'Korea'
+prevalence_m[prevalence_m$Country=='Costa.Rica',2]<-'Costa Rica'
+
+
+merged_all_both_males<-merge(prevalence_m,merged_all_both, 
+                       by = c("Country", "Year"), 
+                       all = TRUE)
+
+
+#Adding the heavy artillery! the prevalence of females
+rownames(prevalence_females_table)
+prevalence_females_table2<-cbind(rownames(prevalence_females_table),prevalence_females_table)
+colnames(prevalence_females_table2)[1]<-'Year'
+
+prevalence_f<- prevalence_females_table2 %>%
+  pivot_longer(cols = -Year, names_to = "Country", 
+               values_to = "Prevalence_females")
+unique(prevalence_f$Country)
+
+prevalence_f[prevalence_f$Country=='Slovakia',2]<-'Slovak Republic'
+prevalence_f[prevalence_f$Country=='New.Zealand',2]<-'New Zealand'
+prevalence_f[prevalence_f$Country=='Czechia',2]<-'Czech Republic'
+prevalence_f[prevalence_f$Country=='United.Kingdom.of.Great.Britain.and.Northern.Ireland',2]<-'United Kingdom'
+prevalence_f[prevalence_f$Country=='United.States.of.America',2]<-'United States'
+prevalence_f[prevalence_f$Country=='Republic.of.Korea',2]<-'Korea'
+prevalence_f[prevalence_f$Country=='Costa.Rica',2]<-'Costa Rica'
+
+
+merged_all_both_males_females<-merge(prevalence_f,merged_all_both_males, 
+                             by = c("Country", "Year"), 
+                             all = TRUE)
+
+
+
+
 #Saving the updated table with 2007 imputation and the right names
-write.table(merged_all, 
+write.table(merged_all_both_males_females, 
             "../data/final_dataset_2007-2020.txt", 
             sep = "\t")
+

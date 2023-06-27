@@ -40,6 +40,7 @@ protect<-mpower[,c(1,2,4)]
 help<-mpower[,c(1,2,5)]
 warn<-mpower[,c(1,2,6)]
 bans<-mpower[,c(1,2,7)]
+monitor<-mpower[,c(1,2,3)] #added now
 
 
 # Reorder columns by year
@@ -115,9 +116,11 @@ warn_table <- warn %>%
 bans_table <- bans %>%
   pivot_wider(names_from = Year, values_from = Enforce.bans.on.tobacco.advertising)
 
+#added now
+monitor_table <- monitor %>%
+  pivot_wider(names_from = Year, values_from = Monitor)
 
-
-
+sum(is.na(monitor))
 
 #Converting back 
 #######IGNORE THE NEXT TWO BLOCKS OF LINES
@@ -161,5 +164,9 @@ write.table(bans_table,
             sep = "\t")
 
 
+#Monitor - new
+write.table(monitor_table, 
+            "../data/mpower_monitor_2007-2020.txt", 
+            sep = "\t")
 
 
