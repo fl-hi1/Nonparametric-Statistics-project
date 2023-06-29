@@ -205,5 +205,15 @@ X11()
 seqplot(all.seq, group = clust2.2, type = "I")
 
 #we select the cluster composed of 5 elements, and add it to the data_seq
-data_seq["clust_5"] = clust5.2
+country_clust = data.frame(Country = countries, Cluster_5 = clust5.2)
 
+#add the data clustering to the full dataset
+clust_add = c()
+
+for(i in 1:length(clust5.2)){
+  clust_add = c(clust_add, rep(clust5.2[i],8))
+}
+
+fulldata["clust_5"] = clust_add
+
+write.table(x = fulldata, file = "../data/final_dataset_2007-2020.txt" )
