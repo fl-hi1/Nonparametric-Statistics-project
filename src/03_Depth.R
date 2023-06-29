@@ -139,7 +139,7 @@ outliers
 
 #Comments:
 #Interesting that 
-#New zealand has a low prevalence despite the higher (increasing!) affordability
+#New zealand has a low prevalence with affordability
 #Luxembourg has an extremely low affordability
 
 #How about cig taxes?
@@ -194,5 +194,3 @@ outliers
 
 #Comments:
 #Interesting that 
-#New zealand has a low prevalence despite the higher (increasing!) affordability
-#Luxembourg has an extremely low affordability

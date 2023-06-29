@@ -12,13 +12,14 @@ library(fda)
 ######CHANGE HERE!
 #rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_b.txt",header=T)
 #rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_f.txt",header=T)
+##MALES
 rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_m.txt",header=T)
 
 data<-rawdata[c(2:7,1),2:39]
 head(data)
 dim(data)
 years<-rawdata[c(2:7,1),1]
-head(years)
+(years)
 
 #Give appropriate name to the dataset rows  
 rownames(data)<-years
@@ -106,6 +107,8 @@ smoothed-data
 new_years <- c(2007, 2008, 2012, 2014, 2016)
 new_years_basismat <- eval.basis(new_years, basis)
 predicted_values <- new_years_basismat %*% est_coef
+dim(new_years_basismat)
+dim(est_coef)
 
 # Assign correct column name and print predicted values
 row.names(predicted_values)<-new_years
@@ -117,8 +120,8 @@ matplot(years,smoothed,
         xlab="years",
         ylab="Age-standardized percent estimate",
         main="Age-standardized estimate of smoking prevalence", 
-        cex.main=2,
-        cex.lab=1.5)
+        cex.main=1.2,
+        cex.lab=1)
 
 for (i in countryrange){
   points(years[1:length(years)], data[1:length(years),i], 
@@ -131,16 +134,78 @@ for (i in countryrange){
 
 predicted_values
 
-#MERGE DATA INTO A SINGLE ONE
+
+
+################
+# Comparing interpolation with smoothing obtained with smoothing splines
+##############
+
+abscissa<-years
+data.fd.1 <- Data2fd(y = as.matrix(data),
+                     argvals = abscissa,
+                     lambda = 100)# lambda = 10^2 #bastava metterlo qui...
+#default for the basis is create.bspline.basis(argvals)
+
+plot(data.fd.1)
+
+basis=create.bspline.basis(abscissa) #same used by default in the functional datum
+new_years_basismat_2 <- eval.basis(new_years, basis)
+dim(new_years_basismat_2)
+predicted_values_smooth <- new_years_basismat_2 %*% data.fd.1$coefs
+
+
+#Visualization and comparison with previous estimates
+matplot(years,(data),
+        type="l",
+        ylab="Age-standardized percent estimate",
+        xlab="Year",
+        main="Age-standardized estimate of smoking prevalence", 
+        cex.main=1.2,
+        cex.lab=1)
+for (i in countryrange){
+  points(years[1:length(years)], data[1:length(years),i], 
+         pch = 20) # add blue points to second line
+}
+for (i in countryrange){
+  points(new_years[1:length(new_years)], predicted_values[1:length(new_years),i], 
+         pch = 20,col='red') # add blue points to second line
+}
+for (i in countryrange){
+  points(new_years[1:length(new_years)], predicted_values_smooth[1:length(new_years),i], 
+         pch = 20,col='orange') # add blue points to second line
+}
+
+#I see that the precitions are extremely similar
+
+
+#Computing the frobenious norm 
+library(mvtnorm)
+norm(predicted_values_smooth-predicted_values, type="F")^2
+# 8.835872
+
+
+# Comment: due to the extreme smoothness of the data, the two predictions
+# are very similar, as also confirmed by the squared frobenious norm and 
+# by visual inspection
+# hence we consider the two estimates interchangeable and 
+# proceed by using the first estimate
+
+
+
+#########################
+# Merge dataset into a single one
+#########################
 chosen_years <- c(2007, 2008, 2010, 2012, 2014, 2016,2018,2020)
 data<-data.frame(data)
+#We use the first estimate
 predicted_values<-data.frame(predicted_values)
 colnames(predicted_values)<-colnames(data)
 
 final_dataset<-rbind(data[rownames(data)%in% chosen_years,],
-                 predicted_values[rownames(predicted_values)%in% chosen_years,])
+                     predicted_values[rownames(predicted_values)%in% chosen_years,])
 
 final_dataset <- final_dataset[order(rownames(final_dataset)),]
+
 
 
 #SAVING FILES

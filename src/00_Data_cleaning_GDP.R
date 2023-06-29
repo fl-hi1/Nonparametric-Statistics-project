@@ -4,6 +4,9 @@ setwd("~/Documents/GitHub/Nonparametric-Statistics-project/src")
 inputpath = "../data"
 outputpath = "../data"
 
+#Import libraries
+library(tidyr)
+
 rawdata<-read.csv("../data/raw_datasets/GDP_OECD_2000-2023_quarterly_expenditure_approach_constant_prices_constant_PPP.csv",header=T)
 countries<-read.table("../data/OECD_countries_income_level",header=T)$Country
 
@@ -20,11 +23,12 @@ countries<-c(countries,
              "Costa Rica",
              "Japan")
 
+
+#Only selecting measures of interest
 GDP_measures<-rawdata[rawdata$Country %in% countries,c('Country','Year','Transaction','Value')]
 
+#Choosing the years
 GDP_allyears<-GDP_measures[GDP_measures$Transaction=='Gross domestic product (expenditure approach)',c(1,2,4)]
-
-
 years_of_interest<-c(2007,2008,2010,2012,2014,2016,2018,2020)
 GDP<-GDP_allyears[GDP_allyears$Year %in% years_of_interest, ]
 
@@ -33,8 +37,6 @@ sum(is.na(GDP)) #NO NANs
 
 
 # Reorder columns by year
-library(tidyr)
-
 GDP_table <- GDP %>%
   pivot_wider(names_from = Country, 
               values_from = Value)

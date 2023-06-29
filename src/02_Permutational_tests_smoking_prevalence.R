@@ -7,7 +7,6 @@ outputpath = "../data"
 
 females<-read.table("../data/smoking_prevalence_females_2007-2020.txt",header=T)
 males<-read.table("../data/smoking_prevalence_males_2007-2020.txt",header=T)
-
 countries<-read.table("../data/OECD_countries_income_level",header=T)$Country
 
 library(progress)

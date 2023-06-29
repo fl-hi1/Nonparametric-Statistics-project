@@ -43,6 +43,7 @@ help_table<-read.table("../data/mpower_help_2007-2020.txt",header=T,sep='',check
 protect_table<-read.table("../data/mpower_protect_2007-2020.txt",header=T,sep='',check.names = FALSE)
 campaigns_table<-read.table("../data/mpower_campaigns_2007-2020.txt",header=T,sep='',check.names = FALSE)
 monitor_table<-read.table("../data/mpower_monitor_2007-2020.txt",header=T,sep='',check.names = FALSE)
+tax_table<-read.table("../data/mpower_taxes_2007-2020.txt",header=T,sep='',check.names = FALSE)
 
 
 
@@ -66,6 +67,9 @@ bans <- bans_table %>%
 monitor <- monitor_table %>%
   pivot_longer(cols = -Country, names_to = "Year", 
                values_to = "Monitor")
+tax <- tax_table %>%
+  pivot_longer(cols = -Country, names_to = "Year", 
+               values_to = "Taxes")
 
 ####MERGE ALL NPOWER DATA
 ####DO NOT RUN TWICE!
@@ -87,6 +91,10 @@ merged_mpower <- merge(merged_mpower,
                        all = TRUE)
 merged_mpower <- merge(merged_mpower, 
                        monitor,
+                       by = c("Country", "Year"), 
+                       all = TRUE)
+merged_mpower <- merge(merged_mpower, 
+                       tax,
                        by = c("Country", "Year"), 
                        all = TRUE)
 
@@ -112,11 +120,6 @@ education_m <- education_males_rough %>%
 affordability <- affordability_table %>%
   pivot_longer(cols = -Year, names_to = "Country", 
                values_to = "Affordability")
-
-taxes <- taxes_table %>%
-  pivot_longer(cols = -Year, names_to = "Country", 
-               values_to = "Cig_taxes")
-
 
 taxes <- taxes_table %>%
   pivot_longer(cols = -Year, names_to = "Country", 
@@ -158,8 +161,28 @@ merged_mpower[merged_mpower$Country=='Republic of Korea',1]<-'Korea'
 affordability[affordability$Country=='Republic of Korea',2]<-'Korea'
 taxes[taxes$Country=='Republic of Korea',2]<-'Korea'
 HDI_MHI[HDI_MHI$country=='Korea (Republic of)',1]<-'Korea'
-
 HDI_MHI[HDI_MHI$country=="Turkey",1]<-'Türkiye'
+
+
+#Saving the updated table with 2007 imputation and the right names
+write.table(merged_mpower, 
+            "../data/mpower_merged_2007-2020.txt", 
+            sep = "\t")
+#####
+
+
+#Converting back into a SUITABLE table
+#DO NOT RUN TWICE
+hdi <-t(HDI_MHI[,c(1:9)]) 
+rownames(hdi)
+colnames(hdi)<-hdi[1,]
+hdi<-as.data.frame(hdi[-1,])
+hdi$Year<-row.names(hdi)
+
+#And exporting
+hdi_final<-hdi %>%
+          pivot_longer(cols = -Year, names_to = "Country", 
+               values_to = "HDI")
 
 
 HDI_MHI_val<-HDI_MHI[,c(1,10)]
@@ -168,12 +191,8 @@ HDI_MHI_clust<-HDI_MHI[,c(1,11)]
 colnames(HDI_MHI_clust)<-c("Country" ,"HDI_MHI_clustering")
 
 
-#Saving the updated table with 2007 imputation and the right names
-write.table(merged_mpower, 
-            "../data/mpower_merged_2007-2020.txt", 
-            sep = "\t")
-
-#####
+##########################################################
+#Merging all together into a big table
 
 merged_gdp_edu<-merge(GDP, 
                       education,
@@ -181,9 +200,9 @@ merged_gdp_edu<-merge(GDP,
                       all = TRUE)
 
 merged_gdp_edu_f<-merge(merged_gdp_edu, 
-                      education_f,
-                      by = c("Country", "Year"), 
-                      all = TRUE)
+                        education_f,
+                        by = c("Country", "Year"), 
+                        all = TRUE)
 
 merged_gdp_edu_m<-merge(merged_gdp_edu_f, 
                         education_m,
@@ -191,9 +210,9 @@ merged_gdp_edu_m<-merge(merged_gdp_edu_f,
                         all = TRUE)
 
 merged_gdp_edu_aff<-merge(merged_gdp_edu_m, 
-                      affordability,
-                      by = c("Country", "Year"), 
-                      all = TRUE)
+                          affordability,
+                          by = c("Country", "Year"), 
+                          all = TRUE)
 
 merged_gdp_edu_aff_taxes<-merge(merged_gdp_edu_aff, 
                                 taxes,
@@ -205,7 +224,12 @@ merged_gdp_edu_aff_taxes_power<-merge(merged_gdp_edu_aff_taxes,
                                       by = c("Country", "Year"), 
                                       all = TRUE)
 
-merged_gdp_edu_aff_taxes_power_MHI<-merge(merged_gdp_edu_aff_taxes_power, 
+merged_gdp_edu_aff_taxes_power_hdi<-merge(merged_gdp_edu_aff_taxes_power, 
+                                      hdi_final,
+                                      by = c("Country", "Year"), 
+                                      all = TRUE)
+
+merged_gdp_edu_aff_taxes_power_MHI<-merge(merged_gdp_edu_aff_taxes_power_hdi, 
                                       HDI_MHI_val,
                                       by = c("Country"), 
                                       all = TRUE)
