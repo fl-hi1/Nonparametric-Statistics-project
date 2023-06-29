@@ -4,6 +4,9 @@ setwd("~/Documents/GitHub/Nonparametric-Statistics-project/src")
 inputpath = "../data"
 outputpath = "../data"
 
+#Imports
+library(tidyr)
+
 rawdata<-read.csv("../data/raw_datasets/Cigarettes_affordability_2010-2020.csv",header=T)
 
 unique(rawdata$Country)
@@ -28,21 +31,18 @@ sum(is.na(affordability)) #NO NANs
 affordability$Affordability...percentage.of.GDP.per.capita.required.to.purchase.2000.cigarettes.of.the.most.sold.brand
 
 # Reorder columns by year
-library(tidyr)
-
 affordability_table <- affordability %>%
   pivot_wider(names_from = Country, 
               values_from = Affordability...percentage.of.GDP.per.capita.required.to.purchase.2000.cigarettes.of.the.most.sold.brand)
 
+#Beware! filling affordability data of 2008 and 207 with the ones of 2006
 affordability_table[7,]<-affordability_table[6,]
 affordability_table[7,1]<-2008
 affordability_table[8,]<-affordability_table[6,]
 affordability_table[8,1]<-2007
 
-#s
 ##Saving the updated table
 write.table(affordability_table, 
             "../data/affordability_2007-2020.txt", 
            sep = "\t")
 
-#

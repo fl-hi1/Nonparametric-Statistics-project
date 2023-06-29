@@ -4,8 +4,6 @@ setwd("~/Documents/GitHub/Nonparametric-Statistics-project/src")
 inputpath = "../data"
 outputpath = "../data"
 
-#rawdata<-read.delim("../data/raw_datasets/Education_OECD_share_population_25-64_withtertiary_level.csv",
-#                    sep = ",", quote="", header=T)
 
 rawdata<-read.delim("../data/raw_datasets/education2.csv",
                     sep = ",", quote="", header=T)

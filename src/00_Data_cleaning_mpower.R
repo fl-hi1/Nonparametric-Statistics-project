@@ -36,6 +36,7 @@ mpower<-rawdata[rawdata$Country %in% countries,]
 
 #Extracting each category separately
 campaigns<-mpower[,c(1,2,9)]
+taxes<-mpower[,c(1,2,8)]
 protect<-mpower[,c(1,2,4)]
 help<-mpower[,c(1,2,5)]
 warn<-mpower[,c(1,2,6)]
@@ -122,6 +123,12 @@ monitor_table <- monitor %>%
 
 sum(is.na(monitor))
 
+#Added_now
+taxes_table <- taxes %>%
+  pivot_wider(names_from = Year, values_from = Raise.taxes.on.tobacco)
+#Filling the 2007 values with the 2008 ones
+taxes_table$'2007'<-taxes_table$'2008'
+
 #Converting back 
 #######IGNORE THE NEXT TWO BLOCKS OF LINES
 original_table <- campaigns_table %>%
@@ -169,4 +176,9 @@ write.table(monitor_table,
             "../data/mpower_monitor_2007-2020.txt", 
             sep = "\t")
 
+#Taxes - new
+#Bans
+write.table(taxes_table, 
+            "../data/mpower_taxes_2007-2020.txt", 
+            sep = "\t")
 
