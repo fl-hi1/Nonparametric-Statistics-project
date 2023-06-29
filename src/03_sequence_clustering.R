@@ -58,6 +58,10 @@ plot(clusterward, ask=TRUE, which.plots=2) #let's do 3 cluster, clearly
 camp.cl3 <- cutree(clusterward, k = 3) 
 cl3.lab <- factor(camp.cl3, labels = paste("Cluster", 1:3))
 
+#let's plot the frequency of the different states by cluster
+X11()
+seqdplot(camp.seq,group = camp.cl3)
+
 
 
 data_clustering = data_seq
