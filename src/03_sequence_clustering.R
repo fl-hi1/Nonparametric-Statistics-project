@@ -1,5 +1,6 @@
 rm(list=ls())
 ###Setting the working directory as the project directory
+#setwd("~/Documents/GitHub/Nonparametric-Statistics-project/src")
 setwd("C:/Users/Val/OneDrive - Politecnico di Milano/travail Polimi/Nonparametric-Statistics-project/src")
 inputpath = "../data"
 outputpath = "../data"
@@ -8,7 +9,7 @@ library(dplyr)
 library("cluster")
 library(TraMineR)
 library(dplyr)
-
+rm(list = ls())
 
 fulldata<-read.table("../data/final_dataset_2007-2020.txt",header=T)
 
@@ -52,6 +53,7 @@ camp.om <- seqdist(camp.seq, method = "OM", indel = 2, sm = z) #mi sambra buono 
 #then, let's do clustering, first ward method
 clusterward <- agnes(camp.om, diss = TRUE, method = "ward")
 
+#quartz()
 X11()
 plot(clusterward, ask=TRUE, which.plots=2) #let's do 3 cluster, clearly
 
@@ -93,6 +95,9 @@ for(count in countries){
 u <- c("Country",seq(2008, 2020, by=2))
 colnames(data_seq)<- u
 
+
+
+
 #now let's define the parameter in order to create the sequence
 
 warn.alpha <- seq(1,5)
@@ -115,7 +120,7 @@ X11()
 plot(clusterward, ask=TRUE, which.plots=2) #let's do 3 cluster, clearly
 
 camp.cl3 <- cutree(clusterward, k = 2) 
-cl5.lab <- factor(camp.cl5, labels = paste("Cluster", 1:5))
+cl3.lab <- factor(camp.cl3, labels = paste("Cluster", 1:2))
 
 
 data_clustering['ward_clustering_on_warn_2'] = camp.cl3

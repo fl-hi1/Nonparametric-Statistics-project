@@ -2,6 +2,8 @@ rm(list=ls())
 ###Setting the working directory as the project directory
 #install.packages("sets")
 #install.packages("wpa")
+
+#setwd("~/Documents/GitHub/Nonparametric-Statistics-project/src"
 setwd("C:/Users/Val/OneDrive - Politecnico di Milano/travail Polimi/Nonparametric-Statistics-project/src")
 inputpath = "../data"
 outputpath = "../data"
@@ -121,6 +123,7 @@ clusterav <- agnes(all.om, diss = TRUE, method = "average")
 clustersin <- agnes(all.om, diss = TRUE, method = "single")
 
 X11()
+quartz()
 plot(clusterward, ask=TRUE, which.plots=2)#2 or 3 cluster might work
 plot(clustercomp, ask=TRUE, which.plots=2)#2 or 3 cluster might work
 plot(clusterav, ask=TRUE, which.plots=2)# is a shit
@@ -200,7 +203,7 @@ clust2.2 <- cutree(clusterward, k = 2)
 X11()
 seqplot(all.seq, group = clust5.2, type = "I")
 X11()
-seqplot(all.seq, group = clust3.2, type = "I")
+seqplot(all.seq, group = clust3.3, type = "I")
 X11()
 seqplot(all.seq, group = clust2.2, type = "I")
 
@@ -209,11 +212,16 @@ country_clust = data.frame(Country = countries, Cluster_5 = clust5.2)
 
 #add the data clustering to the full dataset
 clust_add = c()
-
 for(i in 1:length(clust5.2)){
   clust_add = c(clust_add, rep(clust5.2[i],8))
 }
-
 fulldata["clust_5"] = clust_add
+
+
+clust_add_3 = c()
+for(i in 1:length(clust3.3)){
+  clust_add_3 = c(clust_add_3, rep(clust3.3[i],8))
+}
+fulldata["clust_3"] = clust_add_3
 
 write.table(x = fulldata, file = "../data/final_dataset_2007-2020.txt" )

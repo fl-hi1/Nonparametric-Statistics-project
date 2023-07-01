@@ -2,6 +2,7 @@ rm(list=ls())
 ###Setting the working directory as the project directory
 #install.packages("sets")
 #install.packages("wpa")
+#setwd("~/Documents/GitHub/Nonparametric-Statistics-project/src")
 setwd("C:/Users/Val/OneDrive - Politecnico di Milano/travail Polimi/Nonparametric-Statistics-project/src")
 inputpath = "../data"
 outputpath = "../data"
@@ -24,6 +25,9 @@ data_seq = data.frame(matrix(ncol = 9, nrow = 0))
 
 
 library(sets)
+
+
+#FLAVIA: CHANGING CAMPAIGNS WITH TAXES
 
 for(count in countries){
   row_camp = c(count,mpower[mpower$Country == count,]$Campaigns[-1])
@@ -143,6 +147,7 @@ seqplot(all.seq, group = clustcomp2, type = "I")
 
 
 #frequency plot
+quartz()
 X11()
 seqdplot(all.seq, group = clust2)
 
