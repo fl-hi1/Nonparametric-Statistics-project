@@ -5,15 +5,15 @@ inputpath = "../data"
 outputpath = "../data"
 
 # Load package fda
-#install.packages('fda')
 library(fda)
 
 #####Read data and extract values and years, plus reordering years in the correct order
-######CHANGE HERE!
-#rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_b.txt",header=T)
+##BOTH
+rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_b.txt",header=T)
+##FEMALES
 #rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_f.txt",header=T)
 ##MALES
-rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_m.txt",header=T)
+#rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_m.txt",header=T)
 
 data<-rawdata[c(2:7,1),2:39]
 head(data)
@@ -61,7 +61,6 @@ basis <- create.bspline.basis(rangeval=myrange,
                               nbasis=nbasis, 
                               norder=myorder)
 #Plot basis
-quartz()
 plot(basis)
 
 # Evaluate bspline basis on abscissa
@@ -132,8 +131,6 @@ for (i in countryrange){
          pch = 20,col='red') # add blue points to second line
 }
 
-predicted_values
-
 
 
 ################
@@ -181,7 +178,9 @@ for (i in countryrange){
 #Computing the frobenious norm 
 library(mvtnorm)
 norm(predicted_values_smooth-predicted_values, type="F")^2
-# 8.835872
+# 7.486604 both
+# 8.835872 males 
+# 7.009144 females
 
 
 # Comment: due to the extreme smoothness of the data, the two predictions
@@ -190,6 +189,8 @@ norm(predicted_values_smooth-predicted_values, type="F")^2
 # hence we consider the two estimates interchangeable and 
 # proceed by using the first estimate
 
+
+#I repeat the same analysis for both, males and females with similar results
 
 
 #########################
