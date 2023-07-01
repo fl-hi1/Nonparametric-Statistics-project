@@ -1,161 +1,6 @@
-rm(list=ls())
-
-###Setting the working directory as the project directory
-setwd("~/Documents/GitHub/Nonparametric-Statistics-project/src")
-
-inputpath = "../data"
-outputpath = "../data"
-
-#Imports
-library(tidyr)
-library(dplyr)
-library(lme4)
-library(pbapply)
-library(mgcv)
-library(conformalInference)
-library(ggplot2)
-library(progress)
-library(parallel)
-library(pbapply)
-
-
-#Import data
-data<-read.table("../data/final_dataset_2007-2020.txt",
-                 header=T, 
-                 sep='',
-                 check.names = FALSE)
-
-
-
-#Logging the gdp
-data$GDP<-log(data$GDP)
-boxplot(data$GDP~data$Country)
-
-plot(data$Education)
-boxplot(data$Education~data$Country)
-
-data$Year<-as.numeric(data$Year)
-
-#creating unified mpower indes
-#Creating a unified index
-min_index=12 # since 1 is not possible
-max_index=29 #6*5
-
-data$mpower_all=((data$Taxes+
-                    data$Help+
-                    data$Warn+
-                    data$Bans+
-                    data$Protect+
-                    data$Monitor)-min_index)/(max_index-min_index)
-boxplot(data$mpower_all~data$Country)
-boxplot(data$mpower_all~as.factor(data$Year))
-#Seems that the countries have increased their policies across years!
-#See "mpower_index_permutation_bootstrap" src file for analysis
-
-
-
-#Check the variable type
-typeof(data$Year)
-typeof(data$GDP)
-typeof(data$Affordability)
-typeof(data$Prevalence_both)
-typeof(data$Cig_taxes)
-data$Country<-as.factor(data$Country)
-typeof(data$Country)
-data$Cig_taxes<-data$Cig_taxes*100
-
-
-
-#I start by considering values from 2008
-data_gam<-data
-data_gam=data_gam[data_gam$Year!='2007',]
-#data_gam=data_gam[data_gam$Year!='2008',]
-
-#I also remove japan as it has no education data
-data_gam=data_gam[data_gam$Country!='Japan',]
-
-#data_gam$Campaigns<-as.numeric(data_gam$Campaigns)
-data_gam$ban<-as.numeric(data_gam$Bans)
-data_gam$Monitor<-as.numeric(data_gam$Monitor)
-data_gam$Help<-as.numeric(data_gam$Help)
-data_gam$Protect<-as.numeric(data_gam$Protect)
-data_gam$Warn<-as.numeric(data_gam$Warn)
-data_gam$Taxes<-as.numeric(data_gam$Taxes)
-
-data_gam$Prevalence_both<-data_gam$Prevalence_both/100
-data_gam$Prevalence_males<-data_gam$Prevalence_males/100
-data_gam$Prevalence_females<-data_gam$Prevalence_females/100
-
-data_gam$HDI_MHI_clustering<-as.factor(data_gam$HDI_MHI_clustering)
-
-#data_gam$mpower_all<-data_gam$mpower_all*100
-
-########################################################################
-############################# GAM MODELS ##############################
-########################################################################
-
-#PREVALENCE BOTH VERSUS MPOWER FULL INDEX
-#COUNTRIES ARE ADDED AS FACTOR
-
-#Adding GDP and Education
-#GAM model, smoothing term with cubic splines
-#I start by adding the MPOWER index as a smooth term
-#I will then see if I can reduce this term
-
-model_gam_1 = mgcv::gam(
-  data_gam$Prevalence_both~ 
-    data_gam$Year+                  #the behaviour is nearly linear,                                    # I can probably reduce the model
-    data_gam$Country+
-    s(data_gam$GDP, bs = 'cr') + 
-    s(data_gam$Education, bs = 'cr') +
-    data_gam$mpower_all,
-  family = betar(link = "logit")
-)
-plot(model_gam_1)
-summary(model_gam_1)
-plot(model_gam_1$residuals)
-hist(model_gam_1$residuals)
-#There do not seem to be autocorrelation patterns
-#in the residuals.
-#however, a deviance so high is a clear indication of overfitting
-
-
-################ Same on females
-model_gam_f = mgcv::gam(
-    data_gam$Prevalence_females ~ 
-    data_gam$Year+ #the behaviour is nearly linear, 
-    data_gam$Country+
-    s(data_gam$GDP, bs = 'cr') + 
-    s(data_gam$Education_females, bs = 'cr') +
-    data_gam$mpower_all,
-    family = betar(link = "logit")
-)
-plot(model_gam_f)
-summary(model_gam_f)
-plot(model_gam_f$residuals)
-hist(model_gam_f$residuals)
-shapiro.test(model_gam_f$residuals)
-
-################ Same on males
-model_gam_m = mgcv::gam(
-    data_gam$Prevalence_males ~ 
-    data_gam$Year+ #the behaviour is nearly linear, 
-    data_gam$Country+
-    s(data_gam$GDP, bs = 'cr') + 
-    s(data_gam$Education_males, bs = 'cr') +
-    data_gam$mpower_all ,
-      family = betar(link = "logit")
-)
-plot(model_gam_m)
-summary(model_gam_m)
-plot(model_gam_m$residuals)
-hist(model_gam_m$residuals)
-shapiro.test(model_gam_m$residuals)
-
-
 ##################### Model with MPOWER components separated
 model_gam_2 = mgcv::gam(
-    data_gam$Prevalence_both ~ 
+  data_gam$Prevalence_both ~ 
     data_gam$Year+                  
     data_gam$Country+
     s(data_gam$GDP, bs = 'cr') + 
@@ -166,7 +11,7 @@ model_gam_2 = mgcv::gam(
     data_gam$Monitor+
     data_gam$Warn+
     data_gam$Bans,
-    family = betar(link = "logit")
+  family = betar(link = "logit")
 )
 plot(model_gam_2)
 summary(model_gam_2)
@@ -182,7 +27,7 @@ shapiro.test(model_gam_2$residuals)
 ######
 #Females
 model_gam_3 = mgcv::gam(
-    data_gam$Prevalence_females ~ 
+  data_gam$Prevalence_females ~ 
     data_gam$Year+                  #the behaviour is nearly linear, 
     # I can probably reduce the model
     data_gam$Country+
@@ -194,7 +39,7 @@ model_gam_3 = mgcv::gam(
     data_gam$Monitor+
     data_gam$Warn+
     data_gam$Bans,
-    family = betar(link = "logit")
+  family = betar(link = "logit")
 )
 plot(model_gam_3)
 summary(model_gam_3)
@@ -207,20 +52,20 @@ shapiro.test(model_gam_3$residuals)
 
 #Males
 model_gam_4 = mgcv::gam(
-    data_gam$Prevalence_males ~ 
+  data_gam$Prevalence_males ~ 
     data_gam$Year+                  #the behaviour is nearly linear, 
     # I can probably reduce the model
     data_gam$Country+
     s(data_gam$GDP, bs = 'cr') + 
     s(data_gam$Education_males, bs = 'cr') +
-   # s(data_gam$HDI, bs = 'cr') + 
+    # s(data_gam$HDI, bs = 'cr') + 
     data_gam$Taxes+
     data_gam$Help+
     data_gam$Protect+
     data_gam$Monitor+
     data_gam$Warn+
     data_gam$Bans,
-    family = betar(link = "logit")
+  family = betar(link = "logit")
 )
 plot(model_gam_4)
 summary(model_gam_4)
@@ -239,10 +84,10 @@ shapiro.test(model_gam_4$residuals)
 #We try to use another strategy... based on a different clustering
 
 
-################## ################## ################## 
+############################################################### 
 ################## MHI- based clustering ######################
-##################  of countries ################## ##########
-
+##################  of countries ##############################
+############################################################### 
 #We use the MHI and the clustering based on it
 
 data_gam$HDI_MHI_clustering<-as.factor(data_gam$HDI_MHI_clustering)
@@ -258,7 +103,7 @@ model_gam_f = mgcv::gam(
     #I introduce both the HDI MHI and the HDI_MHI clustering
     s(data_gam$HDI, bs = 'cr') +
     data_gam$HDI_MHI_clustering+
-   data_gam$mpower_all:data_gam$HDI_MHI_clustering,
+    data_gam$mpower_all:data_gam$HDI_MHI_clustering,
   family = betar(link = "logit")
 )
 plot(model_gam_f)
@@ -270,7 +115,7 @@ shapiro.test(model_gam_f$residuals)
 
 
 model_gam_f = mgcv::gam(
-    data_gam$Prevalence_females ~ 
+  data_gam$Prevalence_females ~ 
     data_gam$Year+  
     s(data_gam$GDP, bs = 'cr') + 
     s(data_gam$Education_females, bs = 'cr') +
@@ -359,17 +204,17 @@ data_gam$Help_pre<-mpower_pre$Help
 
 
 data_gam$HDI_MHI_clustering<-as.factor(data_gam$HDI_MHI_clustering)
-  
+
 model_gam_lagged = mgcv::gam(
-    Prevalence_females~ 
+  Prevalence_females~ 
     Year+ #the behaviour is nearly linear, 
     # I can probably reduce the model
     s(GDP, bs = 'cr') + 
     s(Education_females, bs = 'cr') +
     s(HDI, bs = 'cr') +
-  #  data_gam$Country+
+    #  data_gam$Country+
     data_gam$mpower_pre*HDI_MHI_clustering
-   # Taxes_pre+
+  # Taxes_pre+
   #  Help_pre+
   #  Monitor_pre+
   #  Protect_pre+
@@ -400,9 +245,9 @@ model_gam_lagged_m = mgcv::gam(
     s(data_gam$GDP, bs = 'cr') + 
     s(data_gam$Education_males, bs = 'cr') +
     s(data_gam$HDI, bs = 'cr') +
-   data_gam$HDI_MHI_clustering+
+    data_gam$HDI_MHI_clustering+
     data_gam$mpower_pre ,
-    #data_gam$Country+
+  #data_gam$Country+
   family = betar(link = "logit")
 )
 plot(model_gam_lagged_m)
@@ -426,7 +271,6 @@ ordinal_data$Monitor<-as.factor(ordinal_data$Monitor)
 ordinal_data$Warn<-as.factor(ordinal_data$Warn)
 ordinal_data$Protect<-as.factor(ordinal_data$Protect)
 ordinal_data$Taxes<-as.factor(ordinal_data$Taxes)
-
 
 
 

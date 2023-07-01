@@ -700,7 +700,7 @@ final_model_females<-gam(
 )
 summary(final_model_females)
 
-
+plot(final_model_females)
 
 
 
@@ -779,6 +779,8 @@ summary(model_gam_both)
 set.seed(2022)  # For reproducibility
 
 # Create indices for cross-validation folds
+
+data_gam$Prevalence_females<-data_gam$Prevalence_females
 num_folds=5
 folds <- sample(rep(1:num_folds, length.out = nrow(data_gam)))
 evaluation_metric<-numeric(num_folds)
@@ -787,23 +789,22 @@ for (i in 1:num_folds) {
   # Split the data into training and validation sets based on the fold
   train_data <- data_gam[folds != i, ]  # Training set
   valid_data <- data_gam[folds == i, ]  # Validation set
-  
+
   # Fit the GAM model with GCV using the training set
   gam_model <- gam(Prevalence_females ~
                      Year+
                      Country+
                      s(HDI, bs = 'cr') +
-                     Affordability
-                   ,
+                     Affordability,
                    data = train_data
                    )
   # Make predictions on the validation set
   predicted_values <- predict(gam_model, newdata = valid_data)
+  #predicted_values <- plogis(predicted_values_l)
   
-  # Calculate the evaluation metric (e.g., MSE) for the fold
+  #Calculate the evaluation metric (e.g., MSE) for the fold
   evaluation_metric[i] <- mean((valid_data$Prevalence_females - (predicted_values))^2)
 }
-
 
 # Calculate the average evaluation metric across all folds (e.g. RMSE)
 average_metric <- (sqrt(mean(evaluation_metric)))
