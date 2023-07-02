@@ -78,7 +78,9 @@ p_val_2007
 # Empirical type-1 Error with confidence interval
 estimated.alpha <- sum(p_val_2007 < alpha) / B
 estimated.alpha
-c(estimated.alpha - sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2), estimated.alpha, estimated.alpha + sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2))
+c(estimated.alpha - sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2), 
+  estimated.alpha, 
+  estimated.alpha + sqrt(estimated.alpha * (1 - estimated.alpha) / B) * qnorm(1-alpha/2))
 
 ##### 2008
 mydf<-t(df_2008)
@@ -128,7 +130,6 @@ c(p_val_2007,
 #Conclusion: 
 #the difference is significant for all years, so it may make sense to
 #perform two separate regressions
-
 
 #Question: is it better to do so or to run two different regressions separately?
 

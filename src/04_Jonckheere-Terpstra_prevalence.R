@@ -17,6 +17,7 @@ inputpath = "../data"
 outputpath = "../data"
 
 #Import packages
+#install.packages("DescTools")
 library(DescTools) #to perform the test
 
 data_b<-read.table("../data/smoking_prevalence_both_2007-2020.txt",header=T, sep='',check.names = FALSE)
@@ -26,7 +27,7 @@ data_f<-read.table("../data/smoking_prevalence_females_2007-2020.txt",header=T, 
 
 
 #########################################
-############## BOTH ##################
+############## BOTH #####################
 #########################################
 # Sample data 
 data <- data.frame(t(data_b)) ####BOTH
