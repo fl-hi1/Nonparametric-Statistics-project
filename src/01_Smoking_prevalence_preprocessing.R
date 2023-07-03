@@ -1,0 +1,233 @@
+rm(list=ls())
+###Setting the working directory as the project directory
+setwd("~/Documents/GitHub/Nonparametric-Statistics-project/src")
+inputpath = "../data"
+outputpath = "../data"
+
+# Load packages
+library(fda)
+library(mvtnorm)
+
+
+#####Read data and extract values and years, plus reordering years in the correct order
+##BOTH
+#rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_b.txt",header=T)
+##FEMALES
+rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_f.txt",header=T)
+##MALES
+#rawdata<-read.table("../data/semiprocessed_datasets/smoking_prevalence_m.txt",header=T)
+
+data<-rawdata[c(2:7,1),2:39]
+head(data)
+dim(data)
+years<-rawdata[c(2:7,1),1]
+(years)
+
+#Give appropriate name to the dataset rows  
+rownames(data)<-years
+
+#Plot of the time points, points indicate the values
+matplot(years,data,  
+        type = "l",
+        lty="dashed",
+        xlab="years",
+        ylab="Age-standardized percent",
+        main="Age-standardized smoking prevalence")
+
+countryrange<-1:38
+
+for (i in countryrange){
+  points(years, data[,i], pch = 20) # add blue points to second line
+}
+
+########################################################################
+########################################################################
+##############                 SMOOTHING                   #############
+########################################################################
+########################################################################
+
+##install.packages('mgcv')
+library(mgcv)
+##install.packages('splines')
+library(splines)
+
+
+# Create bspline basis imposing the passage by the points
+myrange<-c(2000,2020) 
+myknots = c(2000,2010, 2015, 2018, 2019, 2020)
+myorder=3
+nbasis = myorder + length(myknots) -2
+
+basis <- create.bspline.basis(rangeval=myrange,
+                              breaks=myknots,
+                              nbasis=nbasis, 
+                              norder=myorder)
+#Plot basis
+plot(basis)
+
+# Evaluate bspline basis on abscissa
+basismat <- eval.basis(years[1:length(years)], basis)
+#Dimensional check - c(number of timepoints,  number of basis)
+c(dim(data)[1], nbasis) 
+
+
+# Estimate coefficients 
+est_coef = lsfit(basismat, data, intercept=FALSE)$coef #help(lsfit) ls fit
+est_coef
+dim(est_coef)
+
+#Assess smoothed values (they are of course the same of the real ones)
+smoothed <- basismat %*% est_coef
+head(smoothed)
+dim(smoothed)
+
+#Xsp0<-data.frame(Xsp0)
+row.names(smoothed)<-years
+
+#Plot smoothed function
+matplot(years,smoothed, 
+        type="l",
+        xlab="years",
+        ylab="Age-standardized percent estimate",
+        main="Age-standardized estimate of smoking prevalence")
+
+for (i in countryrange){
+  points(years[1:length(years)], data[1:length(years),i], pch = 20) # add blue points to second line
+}
+#Double visual check that the smoothing points exactly superimpose the original ones
+for (i in countryrange){
+  points(years[1:length(years)], smoothed[1:length(years),i], 
+         col='green',
+         pch = 1) 
+}
+#Triple numerical check: smoothed data points - original data points
+#are null (at the net of some approximation error)
+smoothed-data
+
+# Predict values for new years
+new_years <- c(2007, 2008, 2012, 2014, 2016)
+new_years_basismat <- eval.basis(new_years, basis)
+predicted_values <- new_years_basismat %*% est_coef
+dim(new_years_basismat)
+dim(est_coef)
+
+# Assign correct column name and print predicted values
+row.names(predicted_values)<-new_years
+predicted_values
+
+#Plot smoothed function
+matplot(years,smoothed,
+        type="l",
+        xlab="years",
+        ylab="Age-standardized percent estimate",
+        main="Age-standardized estimate of smoking prevalence", 
+        cex.main=1.2,
+        cex.lab=1)
+
+for (i in countryrange){
+  points(years[1:length(years)], data[1:length(years),i], 
+         pch = 20) # add blue points to second line
+}
+for (i in countryrange){
+  points(new_years[1:length(new_years)], predicted_values[1:length(new_years),i], 
+         pch = 20,col='red') # add blue points to second line
+}
+
+
+
+################
+# Comparing interpolation with smoothing obtained with smoothing splines
+##############
+
+abscissa<-years
+data.fd.1 <- Data2fd(y = as.matrix(data),
+                     argvals = abscissa,
+                     lambda = 100)# lambda = 10^2 #bastava metterlo qui...
+#default for the basis is create.bspline.basis(argvals)
+
+plot(data.fd.1)
+
+basis=create.bspline.basis(abscissa) #same used by default in the functional datum
+new_years_basismat_2 <- eval.basis(new_years, basis)
+dim(new_years_basismat_2)
+predicted_values_smooth <- new_years_basismat_2 %*% data.fd.1$coefs
+
+
+
+#Visualization and comparison with previous estimates
+matplot(years,(data),
+        type="l",
+        ylab="Age-standardized percent estimate",
+        xlab="Year",
+        main="Estimate of smoking prevalence", 
+        cex.main=1.2,
+        cex.lab=1)
+for (i in countryrange){
+  points(years[1:length(years)], data[1:length(years),i], 
+         pch = 20) 
+}
+for (i in countryrange){
+  points(new_years[1:length(new_years)], predicted_values[1:length(new_years),i], 
+         pch = 3,col='red') 
+}
+for (i in countryrange){
+  points(new_years[1:length(new_years)], predicted_values_smooth[1:length(new_years),i], 
+         pch = 20,col='orange') 
+}
+legend("topright", 
+       legend = c("Observed", "Interpolation", "Smoothing splines lambda=100"),
+       pch = c(20, 3, 20),
+       col = c("black", "red", "orange"))
+
+#I see that the precitions are extremely similar
+
+
+#Computing the frobenious norm 
+norm(predicted_values_smooth-predicted_values, type="F")^2
+# 7.486604 both
+# 8.835872 males 
+# 7.009144 females
+
+
+# Comment: due to the extreme smoothness of the data, the two predictions
+# are very similar, as also confirmed by the squared frobenious norm and 
+# by visual inspection
+# hence we consider the two estimates interchangeable and 
+# proceed by using the first estimate
+
+
+#I repeat the same analysis for both, males and females with similar results
+
+
+#########################
+# Merge dataset into a single one
+#########################
+chosen_years <- c(2007, 2008, 2010, 2012, 2014, 2016,2018,2020)
+data<-data.frame(data)
+#We use the first estimate
+predicted_values<-data.frame(predicted_values)
+colnames(predicted_values)<-colnames(data)
+
+final_dataset<-rbind(data[rownames(data)%in% chosen_years,],
+                     predicted_values[rownames(predicted_values)%in% chosen_years,])
+
+final_dataset <- final_dataset[order(rownames(final_dataset)),]
+
+
+
+#SAVING FILES
+#write.table(final_dataset, 
+#            "../datasmoking_prevalence_males_2007-2020.txt", 
+#            sep = "\t")
+#
+
+#write.table(final_dataset, 
+#            "../data/smoking_prevalence_females_2007-2020.txt", 
+#            sep = "\t")
+#
+
+#write.table(final_dataset, 
+#            "../data/smoking_prevalence_both_2007-2020.txt", 
+#            sep = "\t")
+#
+
