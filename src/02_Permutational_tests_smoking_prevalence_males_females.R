@@ -132,7 +132,3 @@ c(p_val_2007,
 #perform two separate regressions
 
 #Question: is it better to do so or to run two different regressions separately?
-
-
-
-
