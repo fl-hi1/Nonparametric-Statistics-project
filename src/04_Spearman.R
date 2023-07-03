@@ -176,8 +176,6 @@ plot(f_data_cig) # what happens if I do plot(data)?
 
 #Identify outliers
 
-
-
 ###########Assessing Spearmann correlation
 
 #Prevalence males-prevalence females
@@ -187,6 +185,69 @@ cor_spearman(bivariate_data, ordering='MHI')
 # 0.5416701
 cor_spearman(bivariate_data, ordering='MEI')
 # 0.5427426
+
+
+library(parallel)
+library(pbapply)
+library(progress) #for progress bar
+
+
+diagnostic_permutation <- function(T20, T2) {
+  B <- length(T2)
+  
+  # Compare real test statistic with the ones given by the permuted data
+  hist(T2, xlim = range(c(T2, T20)))
+  abline(v = T20, col = 3, lwd = 4)
+  
+  # Empirical cumulative distribution function
+  plot(ecdf(T2),main="ECDF(T2)")
+  abline(v = T20, col = 3, lwd = 4)
+  
+  # P-value
+  p_val <- sum(T2 >= T20) / B
+  cat("p-value: ", p_val)
+}
+
+compute_t_stat <- function(df1, df2,grid) {
+  df1_f<- roahd::fData(grid,df1)
+  df2_f<- roahd::fData(grid,df2)
+  bivariate_data <-roahd::as.mfData(list(df1_f, df2_f))
+  spearman_f<-roahd::cor_spearman(bivariate_data, ordering='MHI')
+  return(abs(spearman_f))
+}
+
+
+# observed test statistics
+df1<-Prev_m_table
+df2<-Prev_f_table
+T20 = compute_t_stat(df1, df2,grid)
+T20
+
+perm_wrapper = function(df1,df2,grid) {
+  df_pooled = rbind(df1, df2)
+  n = nrow(df_pooled)
+  n1 = nrow(df1)
+  permutation = sample(n)
+  df_perm = df_pooled[permutation, ]
+  df1_perm = df_perm[1:n1, ]
+  df2_perm = df_perm[(n1 + 1):n, ]
+  compute_t_stat(df1_perm, df2_perm,grid)
+}
+
+seed=2022
+B=1000
+# parallel
+n_cores <- detectCores()
+cl = makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(DepthProc)))
+clusterExport(cl, varlist = list("perm_wrapper", "df1", "df2", "grid", "compute_t_stat"))
+set.seed(seed)
+T2 <- pbreplicate(10000, perm_wrapper(df1, df2, grid), cl = cl)
+stopCluster(cl)
+
+par(mfrow=c(1,2))
+diagnostic_permutation(T20,T2)
+#p-value:  0
 
 
 #Correlation Edu-GDP

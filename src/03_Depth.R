@@ -230,7 +230,7 @@ bagplot(df1,
         xlab='Smoking prevalence in 2008 (%)',
         ylab="Smoking prevalence in 2020 (%)",
         main="Smoking prevalence 2008-2020")
-par(cex.axis = 1.4,cex.lab=1.5, cex.main=1.4)
+par(cex.axis = 1.4,cex.lab=1.5,cex.main=1.8)
 lines(x=0:50, y=0:50, col='red',lty=2)
 text(data_2008,
      data_2020,
@@ -247,7 +247,7 @@ bagplot(df_f,
         xlab='Smoking prevalence in 2008 (%)',
         ylab="Smoking prevalence in 2020 (%)",
         main="Female prevalence 2008-2020")
-par(cex.axis = 1.4,cex.lab=1.5,cex.main=1.4)
+par(cex.axis = 1.4,cex.lab=1.5,cex.main=1.8)
 lines(x=0:50, y=0:50, col='red',lty=2)
 text(data_2008_females,
      data_2020_females,
@@ -263,7 +263,7 @@ bagplot(df_m,
         xlab='Smoking prevalence in 2008 (%)',
         ylab="Smoking prevalence in 2020 (%)",
         main="Male prevalence 2008-2020")
-par(cex.axis = 1.4,cex.lab=1.5,cex.main=1.4)
+par(cex.axis = 1.4,cex.lab=1.5,cex.main=1.8)
 lines(x=0:50, y=0:50, col='red',lty=2)
 text(data_2008_males,
      data_2020_males,
@@ -281,14 +281,22 @@ databub<-data.frame(data_2008=data_2008,
 # Create a 2D bubble plot for both sexes
 ggplot(data=databub,aes(x = data_2008, y = data_2020,  color = HDI_MHI)) +
   geom_point() +
-  geom_text(aes(label = countries), vjust = 1.5) +  # Add labels with the 'Country' variable
+  geom_text(aes(label = countries), vjust = 1.5, size=4.5) +  # Add labels with the 'Country' variable
   geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "black") +  # Add the y = x line
   scale_color_gradient(low = "red", high = "blue") +
   labs(x = "Smoking prevalence in 2008 (%)", 
        y = "Smoking prevalence in 2020 (%)", 
        size = "Population", 
        color = "HDI_MHI") +
-  theme(axis.title = element_text(size = 12)) + # Increase the axis label size
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14),  # Increase the size of the axis labels
+    plot.title = element_text(size = 16),
+    legend.title = element_text(size = 14),
+    panel.background = element_rect(fill = "white")  # Set a white color for the panel background
+  ) +
+  # Increase the size of the color label
   ggtitle("Smoking Prevalence in 2008 vs 2020 in OECD Countries")
 
 
@@ -298,14 +306,22 @@ ggplot(data=databub,aes(x = data_2008_females,
                         y = data_2020_females,
                         color = HDI_MHI)) +
   geom_point() +
-  geom_text(aes(label = countries), vjust = 1.5) +  # Add labels with the 'Country' variable
+  geom_text(aes(label = countries), vjust = 1.5,size=4.5) +  # Add labels with the 'Country' variable
   geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "black") +  # Add the y = x line
   scale_color_gradient(low = "red", high = "blue") +
   labs(x = "Smoking prevalence in 2008 (%)", 
        y = "Smoking prevalence in 2020 (%)", 
        size = "Population", 
        color = "HDI_MHI") +
-  theme(axis.title = element_text(size = 12)) + # Increase the axis label size
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14),  # Increase the size of the axis labels
+    plot.title = element_text(size = 16),
+    legend.title = element_text(size = 14),
+    panel.background = element_rect(fill = "white")  # Set a white color for the panel background
+  ) +
+  # Increase the size of the color label
   ggtitle("Smoking Prevalence for females in 2008 vs 2020 in OECD Countries")
 
 
@@ -314,26 +330,25 @@ ggplot(data=databub,aes(x = data_2008_males,
                         y = data_2020_males,
                         color = HDI_MHI)) +
   geom_point() +
-  geom_text(aes(label = countries), vjust = 1.5) +  # Add labels with the 'Country' variable
+  geom_text(aes(label = countries), vjust = 1.5,size=4.5) +  # Add labels with the 'Country' variable
   geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "black") +  # Add the y = x line
   scale_color_gradient(low = "red", high = "blue") +
   labs(x = "Smoking prevalence in 2008 (%)", 
        y = "Smoking prevalence in 2020 (%)", 
        size = "Population", 
        color = "HDI_MHI") +
-  theme(axis.title = element_text(size = 12)) + # Increase the axis label size
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = 16),
+        axis.text = element_text(size = 14),  # Increase the size of the axis labels
+        plot.title = element_text(size = 16),
+        legend.title = element_text(size = 14),
+    panel.background = element_rect(fill = "white")  # Set a white color for the panel background
+  ) +
+# Increase the size of the color label
   ggtitle("Smoking Prevalence for males in 2008 vs 2020 in OECD Countries")
 
 
-#Comment on Korea strange case
-#Female smoking is perceived very negatively in East Asian countries 
-#such as South Korea, Japan, and China, 
-#as well as in Islamic countries. 
-#These countries’ self-reported surveys (SRs) 
-#tend to produce results that underestimate 
-#the number of smokers, owing to the social 
-#desirability response bias. 
-#https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4319222/
 
 
 cluster1<-data[data$Year=='2020',"clust_3"]
@@ -400,7 +415,6 @@ ggplot(data=databub[-7,],aes(x = (data_2020-data_2008)/data_2008*100,
   geom_vline(xintercept = 0, linetype = "dashed", color = "black") +  # Add the y = x line
   theme(axis.title = element_text(size = 12)) + # Increase the axis label size
   ggtitle("Smoking Prevalence for males in 2008 vs 2020 in OECD Countries")
-
 
 
 # Create a 2D bubble plot for males
