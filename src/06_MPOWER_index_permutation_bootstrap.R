@@ -27,7 +27,7 @@ data<-read.table("../data/final_dataset_2007-2020.txt",
                  sep='',
                  check.names = FALSE)
 
-
+data<-data[data$Year!='2007',]
 data$Year<-as.numeric(data$Year)
 
 #creating unified mpower indes
@@ -35,26 +35,50 @@ data$Year<-as.numeric(data$Year)
 min_index=12 # since 1 indicates lack of measures possible so we start from 2
 max_index=29 #6*5 minus 1 for monitor which is up to 5
 
+
 data$mpower_all=((data$Taxes+
                     data$Help+
                     data$Warn+
                     data$Bans+
                     data$Protect+
                     data$Monitor)-min_index)/(max_index-min_index)
-boxplot(data$mpower_all~data$Country)
 
-boxplot(data$mpower_all~as.factor(data$Year))
-#Seems that the countries have increased their policies across years!
+par(mfrow=c(1,1))
+boxplot(data$mpower_all~data$Country,
+        main="MPOWER score distribution over OCSE countries",
+        xlab="Country",
+        ylab="MPOWER score")
 
+par(mfrow=c(1,1))
+boxplot(data$mpower_all~as.factor(data$Year),
+        main="MPOWER score distribution in 2007-2020",
+        xlab="Year",
+        ylab="MPOWER score")#Seems that the countries have increased their policies across years!
+
+
+
+
+library(ggplot2)
+
+ggplot(data, aes(x = as.factor(Year), y = mpower_all)) +
+  geom_boxplot(fill = "steelblue") +
+  labs(title = "MPOWER Score Distribution in 2008-2020",
+       x = "Year",
+       y = "MPOWER Score") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 16, face = "bold"),
+        axis.title = element_text(size = 14),
+        axis.text = element_text(size = 14))
 
 #Can we say that we have increased over time?---------
 #We use two approaches:
 
-dataset_mpower<-data[,c(1,2,22)]
+dataset_mpower<-data[,c(1,2,24)]
 #Both
 mpower_table <- dataset_mpower %>%
   pivot_wider(names_from = Country, 
               values_from = mpower_all)
+
 mpower_table<-as.data.frame(mpower_table)
 
 df<-t(mpower_table[8,-1]-mpower_table[2,-1])
@@ -176,6 +200,44 @@ diagnostic_bootstrap(T.boot, T0, alpha = myalpha)
 #lower    center     upper 
 #0.1470588 0.1764706 0.2352941
 
+
+pred = c(0.1470588 ,0.1764706 ,0.2352941 )
+  
+
+#############Bootstrap on 2008
+
+df<-as.numeric(mpower_table[2,-1])
+T0=median(df)
+T0
+
+compute_bootstrap_sample <- function(df) {
+  permutation <- sample(1:length(df), replace = T) 
+  df.boot <- df[permutation] 
+  #Using the median
+  med <- median(df.boot)
+  return(med) 
+}
+n_cores <- detectCores()
+cl <- makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(np)))
+clusterExport(cl, varlist = list("df", 
+                                 "compute_bootstrap_sample", 
+                                 "seed"))
+set.seed(seed)
+T.boot <- pbreplicate(B, compute_bootstrap_sample(df), cl = cl)
+stopCluster(cl)
+
+myalpha=0.05 #change!
+diagnostic_bootstrap(T.boot, T0, alpha = myalpha)
+df = data.frame(x=x, y =y)
+
+#[1] "Variance:  0.000668238307511667"
+#[1] "Standard deviation:  0.0258503057527695"
+#[1] "Bias:  -0.0152058823529412"
+#[1] "MSE:  0.000899457165643155"
+#lower    center     upper 
+#0.5882353 0.5882353 0.6470588 
+#
 #The bootstrap interval does no contain 0, so we can say that the 
 # median difference betwee mpower value at 2007 and at 2020 
 # is greater than 0
@@ -183,6 +245,53 @@ diagnostic_bootstrap(T.boot, T0, alpha = myalpha)
 #Namely, #So there has been an increase of around 14.6-0.23 in the MPOWER
 #compound score
 
+
+#############Bootstrap on 2020
+
+df<-as.numeric(mpower_table[8,-1])
+T0=median(df)
+T0
+
+compute_bootstrap_sample <- function(df) {
+  permutation <- sample(1:length(df), replace = T) 
+  df.boot <- df[permutation] 
+  #Using the median
+  med <- median(df.boot)
+  return(med) 
+}
+n_cores <- detectCores()
+cl <- makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(np)))
+clusterExport(cl, varlist = list("df", 
+                                 "compute_bootstrap_sample", 
+                                 "seed"))
+set.seed(seed)
+T.boot <- pbreplicate(B, compute_bootstrap_sample(df), cl = cl)
+stopCluster(cl)
+
+myalpha=0.05 #change!
+diagnostic_bootstrap(T.boot, T0, alpha = myalpha)
+
+# [1] "Variance:  0.000369227358846733"
+# [1] "Standard deviation:  0.0192152897153994"
+# [1] "Bias:  0.00411764705882356"
+# [1] "MSE:  0.000386182376147772"
+# lower    center     upper 
+# 0.7058824 0.7647059 0.7941176 
+
+df = data.frame(x=x, y =y)
+
+"2008" = c(0.5882353, 0.5882353 ,0.6470588 )
+"2020" = c(0.7058824 ,0.7647059 ,0.7941176)
+"2020-2008"= c(0.1470588 ,0.1764706 ,0.2352941 )
+
+ggplot(df, aes(x = x, y = y)) +
+  geom_errorbar(aes(ymax = U, ymin = L), width = 0.3) +
+  geom_point(size = 4, col = "darkorange") +
+  coord_flip() +
+  labs(x = "Months",
+       y = "Milk price [$/lbs]",
+       title = "Prediction intervals") 
 
 ###################################
 ############ Can we move to a functional setting?

@@ -373,26 +373,64 @@ databub_m$data_2020<-data_2020_males
 #####INTRODUCING ALSO MPOWER------------
 
 # Create a 2D bubble plot - after removing costarica
-ggplot(data=databub,aes(x = (data_2020-data_2008)/data_2008*100, 
-                             y = ((mpower_all_2020-mpower_all_2008)/mpower_all_2008)*100,
-                             color = HDI_MHI, 
+ggplot(data=databub_m,aes(x = (data_2020-data_2008), 
+                          y = ((mpower_all_2020-mpower_all_2008)),
+                             color = data_2008, 
                              size=mpower_all_2008)) +
   geom_point() +
-  geom_text(aes(label = countries), vjust = 1.5,size=4) +  # Add labels with the 'Country' variable
-  scale_size(range = c(0.5,10), 
+  geom_text(aes(label = countries), vjust = 1.5,size=4,color='black') +  # Add labels with the 'Country' variable
+  scale_size(range = c(0.5,12), 
              breaks=c(0.10, 0.2, 0.3, 0.4 ,0.5, 0.75),
              labels = c("0.1", "0.2","0.3", "0.4", "0.5", "0.75")) +
-  scale_color_gradient(low = "red", high = "blue") +
-  labs(x = "Smoking percentual change with respect to 2008 (%)", 
-       y = "mpower_all_scores percentual change with respect to 2008 (%)", 
+          #   breaks=c(10, 15, 20, 25, 30,35, 40 ,45,50),
+          #   labels = c("10", "15", "20","25", "30", "35","40","45" ,"50")) +
+  scale_color_gradient(low = "green", high = "red") +
+  labs(x = "Difference in Smoking prevalence (2020-2008) (%)", 
+       y = "Difference in MPOWER scores (2020-2008)", 
        size = "MPOWER score 2008", 
-       color = "HDI_MHI") +
+    # size = "prevalence 2008", 
+       color = "prevalence 2008") +
   geom_hline(yintercept = 0, linetype = "dashed", color = "black") +  # Add the y = x line
   geom_vline(xintercept = 0, linetype = "dashed", color = "black") +  # Add the y = x line
   theme(axis.title = element_text(size = 12)) + # Increase the axis label size
-  ggtitle("Smoking Prevalence for males in 2008 vs 2020 in OECD Countries")
+  ggtitle("Changes in prevalence and MPOWER score between 2008 and 2020")
 
 
+library(plotly)
+
+
+fig<-plot_ly(data = databub[-7,], 
+        z = ~I(data_2020 -data_2008), 
+        x = ~I(mpower_all_2020 - mpower_all_2008), 
+        y = ~data_2008,
+        size = ~mpower_all_2008,
+        text = countries[-7],
+    #    color = ~data_2008,
+   #     colors = colorRampPalette(c("green", "red")),
+        marker = list(symbol = "circle", 
+                      sizemode = 'diameter',
+                      color = ~(HDI_MHI),
+                      reversescale = FALSE,
+                      colorscale = "YlOrRd", #"Viridis",  # Specify the desired color scale
+                      showscale = TRUE),
+        sizes  = c(5, 60)
+        ) 
+
+fig<-fig%>%add_markers()
+fig <- fig %>% add_text(
+  x = ~I(mpower_all_2020 - mpower_all_2008),
+  y = ~data_2008,
+  z = ~I(data_2020 - data_2008),
+  text = ~countries[-7],
+  textposition = "top center",
+  textfont = list(size = 12),  # Increase the text size to 12
+  showlegend = FALSE
+)
+fig<-fig%>% layout(scene = list(
+                      zaxis = list(title = "Difference in Smoking prevalence (2020-2008) (%)"),
+                      xaxis = list(title = "Difference in MPOWER scores (2020-2008)"),
+                      yaxis = list(title = "Baseline prevalence 2008 (%)")))
+fig
 # Create a 2D bubble plot - after removing costarica
 ggplot(data=databub[-7,],aes(x = (data_2020-data_2008)/data_2008*100, 
                         y = ((mpower_all_2020-mpower_all_2008)/mpower_all_2008)*100,
@@ -443,7 +481,7 @@ ggplot(data=databub_m[-7,],aes(x = (data_2020-data_2008)/data_2008*100,
 
 
 # Create a 2D bubble plot for females
-ggplot(data=databub_f[-7,],aes(x = (data_2020-data_2008)/data_2008*100, 
+ggplot(data=databub[-7,],aes(x = (data_2020-data_2008)/data_2008*100, 
                         y = (mpower_all_2020-mpower_all_2008)/mpower_all_2008*100,
                         color = data_2008,
                         size=mpower_all_2008)) +
