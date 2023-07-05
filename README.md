@@ -36,13 +36,6 @@ Install the required packages from CRAN. All the necessary packages are containe
 
 
 
-# Running the analysis
-
-The repository contains different files to perform the analysis
-
-- `01_XXXX.Rmd` is a notebook containing XXXX.
-
-
 # Final results
 
 The final presentations can be found presentations folder
@@ -51,7 +44,7 @@ The final presentations can be found presentations folder
 The final report can be found in the report folder
 
 
-The results from the simulations knitted can be found in the current folder
+The results from the simulations knitted can be found in the current folder, while the original markdowns can be found in src/Markdowns
 
 
 # Authors
