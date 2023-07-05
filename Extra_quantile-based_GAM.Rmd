@@ -1,0 +1,165 @@
+---
+title: "Quantile Based GAM"
+output:
+  pdf_document: default
+  html_document: default
+date: "2023-07-05"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r, include=FALSE}
+rm(list=ls())
+
+###Setting the working directory as the project directory
+setwd("~/Documents/GitHub/Nonparametric-Statistics-project/src/Markdowns")
+
+inputpath = "../../data"
+outputpath = "../../data"
+
+#Imports
+library(tidyr)
+library(dplyr)
+library(lme4)
+library(pbapply)
+library(mgcv)
+library(conformalInference)
+library(ggplot2)
+library(progress)
+library(parallel)
+library(pbapply)
+#install.packages("qgam")
+library(qgam)
+
+
+seed=2022
+B=1000
+```
+
+
+```{r, include=FALSE}
+####Permutational test diagnostics
+diagnostic_permutation <- function(T20, T2) {
+  B <- length(T2)
+  # Compare real test statistic with the ones given by the permuted data
+  hist(T2,breaks = 100, xlim = range(c(T2, T20)))
+  abline(v = T20, col = 3, lwd = 4)
+  # Empirical cumulative distribution function
+  plot(ecdf(T2))
+  abline(v = T20, col = 3, lwd = 4)
+  # P-value
+  p_val <- sum(T2 >= T20) / B
+  cat("p-value: ", p_val)
+}
+
+diagnostic_bootstrap <- function(distro, obs, alpha) {  #distro = T.boot, 
+                                                        #obs = predict(fit,x)$y, 
+                                                        #      or T.obs
+                                                        #x potrebbe essere un nuovo punto
+    variance_pred <- var(distro)
+    print(paste("Variance: ", variance_pred))
+    sd_pred <- sd(distro)
+    print(paste("Standard deviation: ", sd_pred))
+    bias_pred <- mean(distro) - obs
+    print(paste("Bias: ", bias_pred))
+    MSE_pred <- variance_pred + bias_pred^2
+    print(paste("MSE: ", MSE_pred))
+    # computing quantiles
+    right.quantile <- quantile(distro, 1 - alpha / 2)
+    left.quantile <- quantile(distro, alpha / 2)
+    # REVERSE!!!!-percentile ----- guardare come si fanno i non reverse!!!!!credo invertendo i due
+    CI <- c(
+        obs - (right.quantile - obs),
+        obs,
+        obs - (left.quantile - obs)
+    )
+    names(CI) <- c("lower", "center", "upper")
+    print(CI)
+    plot(ecdf(distro), main = "Bootstrap distribution")
+    abline(v = CI[2], col = 3, lwd = 2)
+    abline(v = CI[c(1, 3)], lty = 3)
+}
+#Import data
+data<-read.table("../../data/final_dataset_2007-2020.txt",
+                 header=T, 
+                 sep='',
+                 check.names = FALSE)
+data$Year<-as.numeric(data$Year)
+
+#creating unified mpower indes
+#Creating a unified index
+min_index=12 # since 1 is not possible
+max_index=29 #6*5 minus 1 for monitor which is up to 5
+
+data$mpower_all=((data$Taxes+
+                    data$Help+
+                    data$Warn+
+                    data$Bans+
+                    data$Protect+
+                    data$Monitor)-min_index)/(max_index-min_index)
+boxplot(data$mpower_all~data$Country)
+boxplot(data$mpower_all~as.factor(data$Year))
+#Seems that the countries have increased their policies across years!
+data$Year<-as.numeric(data$Year)
+
+data_gam<-data
+data_gam=data_gam[data_gam$Year!='2007',]
+data_gam=data_gam[data_gam$Year!='2008',]
+
+#I also remove japan as it has no education data
+data_gam=data_gam[data_gam$Country!='Japan',]
+
+#data_gam$Campaigns<-as.numeric(data_gam$Campaigns)
+data_gam$Bans<-as.numeric(data_gam$Bans)
+data_gam$Monitor<-as.numeric(data_gam$Monitor)
+data_gam$Help<-as.numeric(data_gam$Help)
+data_gam$Protect<-as.numeric(data_gam$Protect)
+data_gam$Warn<-as.numeric(data_gam$Warn)
+data_gam$Taxes<-as.numeric(data_gam$Taxes)
+data_gam$GDP<-log(data_gam$GDP)
+
+```
+
+
+In this notebook, we try to run quantile-based GAM
+
+We run regression on quantiles, instead than on the mean. We start from the median
+
+```{r}
+
+final_model_females_qgam<-qgam(
+  Prevalence_females ~
+    Year +
+    Country+
+    s(HDI, bs = 'cr') +
+    Affordability,
+  data=data_gam,
+  qu=0.5
+  #  try to remove the outliers with respect to HDI- but that does not change much
+  # data= data_gam[!data_gam$Country %in% c("Mexico", "Chile", "Colombia","Costa Rica"), ]
+)
+
+
+summary(final_model_females_qgam)
+plot(final_model_females_qgam,main="qgam")
+#plot(final_model_females_qgam, scale = FALSE, pages = 1)
+```
+
+We try to predict the value for Turkey
+```{r}
+prevf<-data_gam[data_gam$Country=="Türkiye",3][1]
+prevf
+target<- prevf-0.3*prevf
+target
+
+new_obs<-data.frame(Country="Türkiye",Year=2025,HDI=0.843,Affordability=3.1)
+predict(final_model_females_qgam,new_obs,se=TRUE)
+
+```
+
+
+For a lack of time, we could not try conformalized prediction intervals for quantile regression, but will try them in the future.

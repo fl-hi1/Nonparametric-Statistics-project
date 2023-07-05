@@ -500,11 +500,10 @@ So we have that we cannot say affordability impacts on males
 
 
 
-#############################
-#############################
-# On females
-#############################
-#############################
+
+## We now try to use the same approach on females
+
+
 
 We start by checking if we can remove GDP
 
@@ -870,49 +869,6 @@ Norway will probaby reach the target
 
 
 
-
-################################################################################
-################################################################################
-#######                           EXTRA1:  QGAM                      ##########
-################################################################################
-################################################################################
-
-We run regression on quantiles, instead than on the mean. We start from the median
-
-```{r}
-
-final_model_females_qgam<-qgam(
-  Prevalence_females ~
-    Year +
-    Country+
-    s(HDI, bs = 'cr') +
-    Affordability,
-  data=data_gam,
-  qu=0.5
-  #  try to remove the outliers with respect to HDI- but that does not change much
-  # data= data_gam[!data_gam$Country %in% c("Mexico", "Chile", "Colombia","Costa Rica"), ]
-)
-
-
-summary(final_model_females_qgam)
-plot(final_model_females_qgam,main="qgam")
-#plot(final_model_females_qgam, scale = FALSE, pages = 1)
-```
-
-We try to predict the value for Turkey
-```{r}
-prevf<-data_gam[data_gam$Country=="Türkiye",3][1]
-prevf
-target<- prevf-0.3*prevf
-target
-
-new_obs<-data.frame(Country="Türkiye",Year=2025,HDI=0.843,Affordability=3.1)
-predict(final_model_females_qgam,new_obs,se=TRUE)
-
-```
-
-
-For a lack of time, we could not try conformalized prediction intervals for quantile regression, but will try them in the future.
 
 ################################################################################
 ################################################################################
