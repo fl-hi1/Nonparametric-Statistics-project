@@ -134,7 +134,7 @@ grid <-  seq( 2008, 2020, length.out =  7)
 #transforming data into fd
 f_data_prev_f <- fData(grid,Prev_f_table)
 quartz()
-plot(f_data_prev_m)
+plot(f_data_prev_f)
 
 
 

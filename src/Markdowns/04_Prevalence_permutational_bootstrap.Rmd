@@ -1,0 +1,335 @@
+---
+title: Permutational tests and bootstrap reverse percentile confidence intervals on
+  prevalence
+output:
+  pdf_document: default
+  html_document: default
+date: "2023-07-05"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+rm(list=ls())
+###Setting the working directory as the current directory
+setwd("~/Documents/GitHub/Nonparametric-Statistics-project/src/Markdowns")
+inputpath = "../../data"
+outputpath = "../../data"
+
+
+females<-read.table("../../data/smoking_prevalence_females_2007-2020.txt",header=T)
+males<-read.table("../../data/smoking_prevalence_males_2007-2020.txt",header=T)
+countries<-read.table("../../data/OECD_countries_income_level",header=T)$Country
+
+library(progress)
+library(parallel)
+library(pbapply)
+
+myalpha=alpha =0.05
+B=1000
+```
+
+
+TWO POPULATION PAIRED TEST
+H0: mean(male) = mean(female)
+H1: mean(male) $\neq$ mean(female)
+can be reformulated as
+H0: mean(male-female) = mu
+H1: mean(male-female) $\neq$ mu
+with mu = c(0)
+
+Equivalent to the center of simmetry of one univariate population. The bootstrap is instead computed on the third quantile of the distribution.
+
+I create the dataset of the differences for each year
+
+
+```{r, include=FALSE}
+df<-males-females
+
+df_2007<-df[1,]
+df_2008<-df[2,]
+df_2010<-df[3,]
+df_2012<-df[4,]
+df_2014<-df[5,]
+df_2016<-df[6,]
+df_2018<-df[7,]
+df_2020<-df[8,]
+
+# Set parameters
+test_statistic <- mean
+seed = 1996
+set.seed(seed)
+B=100000
+mu0 <- 0
+```
+
+Utils
+
+```{r}
+perm_t_test_paired <- function(diff, mu0, iter = 10000, test_statistic = mean){
+  T20 <- abs(test_statistic(diff) - mu0)
+  n <- length(diff) 
+  T2 <- numeric(iter)
+  for(perm in 1:iter)
+  {
+    # Random permutation
+    # obs: exchanging data within couples means changing the sign of the difference
+    signs.perm <- rbinom(n, 1, 0.5)*2 - 1
+    diff_perm <- (diff) * matrix(signs.perm,nrow=n ,ncol=1,byrow=FALSE) 
+    diff.mean_perm <- test_statistic(diff_perm)
+    T2[perm] <- abs(diff.mean_perm-mu0)
+  }
+  hist(T2, xlim=c(0,T20))
+  abline(v=T20, col='green')
+  
+  p.value <- sum(T2 >= T20) / B
+  return(p.value)
+}
+
+
+
+###Compute bootstrap confint on the differences
+diagnostic_bootstrap <- function(distro, obs, alpha) {   
+  variance_pred <- var(distro)
+  print(paste("Variance: ", variance_pred))
+  sd_pred <- sd(distro)
+  print(paste("Standard deviation: ", sd_pred))
+  bias_pred <- mean(distro) - obs
+  print(paste("Bias: ", bias_pred))
+  MSE_pred <- variance_pred + bias_pred^2
+  print(paste("MSE: ", MSE_pred))
+  right.quantile <- quantile(distro, 1 - alpha / 2)
+  left.quantile <- quantile(distro, alpha / 2)
+  CI <- c(
+    obs - (right.quantile - obs),
+    obs,
+    obs - (left.quantile - obs)
+  )
+  names(CI) <- c("lower", "center", "upper")
+  print(CI)
+  plot(ecdf(distro), main = "Bootstrap distribution")
+  abline(v = CI[2], col = 3, lwd = 2)
+  abline(v = CI[c(1, 3)], lty = 3)
+}
+```
+
+
+For each year, I run a permutational test and compute bootstrap interval
+
+
+2007
+
+```{r}
+mydf<-t(df_2007)
+perm_t_test_paired(mydf, mu0, B, mean)
+p_val_2007<-perm_t_test_paired(mydf, mu0, B, mean)
+p_val_2007
+
+
+compute_bootstrap_sample <- function(df) {
+  permutation <- sample(1:length(df), replace = T) #or length(df) if numeric vector
+  df.boot <- df[permutation]
+  quant0.75 <- quantile(df.boot)[4]
+  return(quant0.75) # this can be 2D etc.
+}
+
+n_cores <- detectCores()
+cl <- makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(np)))
+clusterExport(cl, varlist = list("mydf",  
+                                 "compute_bootstrap_sample", 
+                                 "seed"))
+B=1000
+set.seed(seed)
+T.boot <- pbreplicate(B, compute_bootstrap_sample(mydf), cl = cl)
+stopCluster(cl)
+
+T.obs=compute_bootstrap_sample(mydf)
+diagnostic_bootstrap(T.boot, T.obs, alpha = myalpha)
+```
+
+2008
+```{r}
+mydf<-t(df_2008)
+p_val_2008<-perm_t_test_paired(mydf, mu0, B, mean)
+p_val_2008
+
+n_cores <- detectCores()
+cl <- makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(np)))
+clusterExport(cl, varlist = list("mydf",  #or "df"
+                                 "compute_bootstrap_sample", 
+                                 "seed"))
+set.seed(seed)
+T.boot <- pbreplicate(B, compute_bootstrap_sample(mydf), cl = cl)
+stopCluster(cl)
+
+myalpha=0.05 #change!
+T.obs=compute_bootstrap_sample(mydf)
+diagnostic_bootstrap(T.boot, T.obs, alpha = myalpha)
+```
+
+2010
+```{r}
+mydf<-t(df_2010)
+p_val_2010<-perm_t_test_paired(mydf, mu0, B, mean)
+p_val_2010
+
+
+n_cores <- detectCores()
+cl <- makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(np)))
+clusterExport(cl, varlist = list("mydf", 
+                                 "compute_bootstrap_sample", 
+                                 "seed"))
+set.seed(seed)
+T.boot <- pbreplicate(B, compute_bootstrap_sample(mydf), cl = cl)
+stopCluster(cl)
+
+T.obs=compute_bootstrap_sample(mydf)
+diagnostic_bootstrap(T.boot, T.obs, alpha = myalpha)
+```
+
+2012
+
+```{r}
+mydf<-t(df_2012)
+p_val_2012<-perm_t_test_paired(mydf, mu0, B, mean)
+p_val_2012
+
+
+n_cores <- detectCores()
+cl <- makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(np)))
+
+clusterExport(cl, varlist = list("mydf",  
+                                 "compute_bootstrap_sample", 
+                                 "seed"))
+set.seed(seed)
+T.boot <- pbreplicate(B, compute_bootstrap_sample(mydf), cl = cl)
+stopCluster(cl)
+
+T.obs=compute_bootstrap_sample(mydf)
+diagnostic_bootstrap(T.boot, T.obs, alpha = myalpha)
+```
+
+2014
+
+```{r}
+mydf<-t(df_2014)
+p_val_2014<-perm_t_test_paired(mydf, mu0, B, mean)
+p_val_2014
+
+
+n_cores <- detectCores()
+cl <- makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(np)))
+clusterExport(cl, varlist = list("mydf", 
+                                 "compute_bootstrap_sample", 
+                                 "seed"))
+set.seed(seed)
+T.boot <- pbreplicate(B, compute_bootstrap_sample(mydf), cl = cl)
+stopCluster(cl)
+
+T.obs=compute_bootstrap_sample(mydf)
+diagnostic_bootstrap(T.boot, T.obs, alpha = myalpha)
+```
+
+2016
+
+```{r}
+mydf<-t(df_2016)
+p_val_2016<-perm_t_test_paired(mydf, mu0, B, mean)
+p_val_2016
+
+
+n_cores <- detectCores()
+cl <- makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(np)))
+clusterExport(cl, varlist = list("mydf",  
+                                 "compute_bootstrap_sample", 
+                                 "seed"))
+set.seed(seed)
+T.boot <- pbreplicate(B, compute_bootstrap_sample(mydf), cl = cl)
+stopCluster(cl)
+
+T.obs=compute_bootstrap_sample(mydf)
+diagnostic_bootstrap(T.boot, T.obs, alpha = myalpha)
+```
+
+2018
+
+```{r}
+mydf<-t(df_2018)
+p_val_2018<-perm_t_test_paired(mydf, mu0, B, mean)
+p_val_2018
+
+
+n_cores <- detectCores()
+cl <- makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(np)))
+clusterExport(cl, varlist = list("mydf",  
+                                 "compute_bootstrap_sample", 
+                                 "seed"))
+set.seed(seed)
+T.boot <- pbreplicate(B, compute_bootstrap_sample(mydf), cl = cl)
+stopCluster(cl)
+
+T.obs=compute_bootstrap_sample(mydf)
+diagnostic_bootstrap(T.boot, T.obs, alpha = myalpha)
+```
+
+2020
+
+```{r}
+mydf<-t(df_2020)
+p_val_2020<-perm_t_test_paired(mydf, mu0, B, mean)
+p_val_2020
+
+
+n_cores <- detectCores()
+cl <- makeCluster(n_cores)
+invisible(clusterEvalQ(cl, library(np)))
+
+clusterExport(cl, varlist = list("mydf",
+                                 "compute_bootstrap_sample", 
+                                 "seed"))
+set.seed(seed)
+T.boot <- pbreplicate(B, compute_bootstrap_sample(mydf), cl = cl)
+stopCluster(cl)
+
+T.obs=compute_bootstrap_sample(mydf)
+diagnostic_bootstrap(T.boot, T.obs, alpha = myalpha)
+```
+
+
+```{r}
+#P-value
+c(p_val_2007,
+  p_val_2008,
+  p_val_2010, 
+  p_val_2012, 
+  p_val_2014,
+  p_val_2016,
+  p_val_2018,
+  p_val_2020)
+```
+
+
+
+Bootstrap
+
+```{r}
+# Year lower center  upper 
+# 2010 14.650 16.075 22.375 
+# 2012 8.421575 14.547000 19.846900 
+# 2014 10.4915 13.1980 17.4820 ---->2014
+# 2016 7.677778 11.865556 15.522222
+# 2018 3.225 10.625 13.750 
+# 2020  4.050  9.725 12.350
+```
+
+
+
