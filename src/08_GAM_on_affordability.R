@@ -302,7 +302,7 @@ summary(model_gam_males)
 plot(model_gam_males)
 
 summ_males<-summary(model_gam_males)
-T0.males<abs(summ_males$s.table[2,3])
+T0.males<-abs(summ_males$s.table[2,3])
 T0.males
 
 
@@ -340,7 +340,7 @@ for(perm in 1:B){
   T2.males[perm] <- abs(summary(model.perm)$s.table[2,3])
 }
 diagnostic_permutation(T0.males,T2.males) 
-# p-value 0.285
+# p-value 0.089
 #We cannot reject H0, hence we can simplify the model
 #and remove GDP
 
@@ -380,7 +380,7 @@ for(perm in 1:B){
   T2[perm] <- abs(summary(model.perm)$s.table[1,3])
 }
 diagnostic_permutation(T0,T2)
-#p-value 0.151, so we can reduce HDI
+#p-value 0.151, so we can remove HDI
 #####---------------------------------------------
 
 #Now we try to remove the education variable
@@ -572,8 +572,8 @@ diagnostic_permutation(T0,T2.females)
 #0.419
 #So we cannot reject H0, we remove education
 
-##Now we try to remove HDI
 
+##Now we try to remove HDI
 model_gam_females.nohdi <- gam(
   Prevalence_females ~
     Year +
@@ -687,8 +687,6 @@ diagnostic_permutation(T0.females,T2.females)
 #p-value is 0 so we should keep the year
 
 
-
-
 ###Final model females
 final_model_females<-gam(
   Prevalence_females ~
@@ -696,18 +694,191 @@ final_model_females<-gam(
     Country+
     s(HDI, bs = 'cr') +
     Affordability,
-  data=data_gam
+   data=data_gam
+ #  try to remove the outliers with respect to HDI- but that does not change much
+ # data= data_gam[!data_gam$Country %in% c("Mexico", "Chile", "Colombia","Costa Rica"), ]
 )
 summary(final_model_females)
 
-plot(final_model_females)
+plot(final_model_females,  main="HDI smooth term")
 
+prevf<-data_gam[data_gam$Country=="France",3][1]
+prevf
+target<- prevf-0.3*prevf
+target
+
+new_obs<-data.frame(Country="France",Year=2025,HDI=0.902,Affordability=3.2)
+predict(final_model_females,new_obs,se=TRUE)
+
+
+#dataprova<-data_gam[data_gam$Country!=c("Mexico","Chile","Colombia"),]
+xnew = new_obs 
+T.obs = predict(final_model_females,newdata=xnew)
+#For smoothing splines (maybe not necessary to write xnew as dataframe)
+#T.obs = predict(m_loc,x=valueofnewpoint)
+
+fitted.obs<-predict(final_model_females, data_gam) 
+#For smoothing splines 
+#predict(fit_smooth_splines, df$x)$y #change x
+res.obs<- data_gam$Prevalence_females-fitted.obs #change y
+
+######Nonparallel
+T.boot <- numeric(B)
+set.seed(seed)
+pb = progress::progress_bar$new(total = B,
+                                format = " Processing [:bar] :percent eta: :eta")
+for(i in 1:B){
+  #### IF YOU HAVE A RESPONSE PERMUTE THE RESIDUALS
+  response.b <- fitted.obs + sample(res.obs, replace = T)
+  
+  #Change here! - chosen model but with response.b as response
+  model.boot <- gam(response.b ~ 
+                      Year +
+                      Country+
+                      s(HDI, bs = 'cr') +
+                      Affordability,
+                    data=data_gam)
+  #change here!
+  T.boot[i] <- predict(model.boot,newdata=xnew)
+  #If the model booted is a smooth splines
+  #T.boot[i] <-predict(model.boot, x = valueofnewpoint)$y
+  pb$tick()
+}
+myalpha=0.1
+diagnostic_bootstrap(T.boot, T.obs, alpha = myalpha)
+target
+
+
+
+
+
+prevf<-data_gam[data_gam$Country=="Türkiye",3][1]
+prevf
+target<- prevf-0.3*prevf
+target
+new_obs<-data.frame(Country="Türkiye",Year=2025,HDI=0.85,Affordability=3.8)
+xnew = new_obs 
+T.obs = predict(final_model_females,newdata=xnew)
+#For smoothing splines (maybe not necessary to write xnew as dataframe)
+#T.obs = predict(m_loc,x=valueofnewpoint)
+
+fitted.obs<-predict(final_model_females, data_gam) 
+#For smoothing splines 
+#predict(fit_smooth_splines, df$x)$y #change x
+res.obs<- data_gam$Prevalence_females-fitted.obs #change y
+
+######Nonparallel
+T.boot <- numeric(B)
+set.seed(seed)
+pb = progress::progress_bar$new(total = B,
+                                format = " Processing [:bar] :percent eta: :eta")
+for(i in 1:B){
+  #### IF YOU HAVE A RESPONSE PERMUTE THE RESIDUALS
+  response.b <- fitted.obs + sample(res.obs, replace = T)
+  
+  #Change here! - chosen model but with response.b as response
+  model.boot <- gam(response.b ~ 
+                            Year +
+                            Country+
+                            s(HDI, bs = 'cr') +
+                            Affordability,
+                          data=data_gam)
+  #change here!
+  T.boot[i] <- predict(model.boot,newdata=xnew)
+  #If the model booted is a smooth splines
+  #T.boot[i] <-predict(model.boot, x = valueofnewpoint)$y
+  pb$tick()
+}
+myalpha=0.1
+diagnostic_bootstrap(T.boot, T.obs, alpha = myalpha)
+target
+
+
+
+########FRANCE
+
+prevf<-data_gam[data_gam$Country=="Norway",3][1]
+prevf
+target<- prevf-0.3*prevf
+target
+
+new_obs<-data.frame(Country="Norway",Year=2025,HDI=0.966,Affordability=2.22)
+predict(final_model_females,new_obs,se=TRUE)
+xnew = new_obs 
+T.obs = predict(final_model_females,newdata=xnew)
+#For smoothing splines (maybe not necessary to write xnew as dataframe)
+#T.obs = predict(m_loc,x=valueofnewpoint)
+
+fitted.obs<-predict(final_model_females, data_gam) 
+#For smoothing splines 
+#predict(fit_smooth_splines, df$x)$y #change x
+res.obs<- data_gam$Prevalence_females-fitted.obs #change y
+
+######Nonparallel
+T.boot <- numeric(B)
+set.seed(seed)
+pb = progress::progress_bar$new(total = B,
+                                format = " Processing [:bar] :percent eta: :eta")
+for(i in 1:B){
+  #### IF YOU HAVE A RESPONSE PERMUTE THE RESIDUALS
+  response.b <- fitted.obs + sample(res.obs, replace = T)
+  
+  #Change here! - chosen model but with response.b as response
+  model.boot <- gam(response.b ~ 
+                      Year +
+                      Country+
+                      s(HDI, bs = 'cr') +
+                      Affordability,
+                    data=data_gam)
+  #change here!
+  T.boot[i] <- predict(model.boot,newdata=xnew)
+  #If the model booted is a smooth splines
+  #T.boot[i] <-predict(model.boot, x = valueofnewpoint)$y
+  pb$tick()
+}
+myalpha=0.1
+diagnostic_bootstrap(T.boot, T.obs, alpha = myalpha)
+target
 
 
 
 ################################################################################
 ################################################################################
-#######                              EXTRA                             ##########
+#######                              QGAM                            ##########
+################################################################################
+################################################################################
+
+install.packages("qgam")
+library(qgam)
+
+final_model_females_qgam<-qgam(
+  Prevalence_females ~
+    Year +
+    Country+
+    s(HDI, bs = 'cr') +
+    Affordability,
+  data=data_gam,
+  qu=0.5
+  #  try to remove the outliers with respect to HDI- but that does not change much
+  # data= data_gam[!data_gam$Country %in% c("Mexico", "Chile", "Colombia","Costa Rica"), ]
+)
+
+summary(final_model_females_qgam)
+plot(final_model_females_qgam,main="qgam")
+#plot(final_model_females_qgam, scale = FALSE, pages = 1)
+
+prevf<-data_gam[data_gam$Country=="Türkiye",3][1]
+prevf
+target<- prevf-0.3*prevf
+target
+
+new_obs<-data.frame(Country="Türkiye",Year=2025,HDI=0.843,Affordability=3.1)
+predict(final_model_females_qgam,new_obs,se=TRUE)
+
+
+################################################################################
+################################################################################
+#######                              EXTRA                            ##########
 ################################################################################
 ################################################################################
 
