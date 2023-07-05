@@ -1,7 +1,7 @@
 
 <!-- omit from toc -->
 # Nonparametric-Statistics-project
-Analysis of data on smoking trends and effects of regulatory polices on OECD countries
+Analysis of data on smoking trends in OECD countries and effects of regulatory polices on prevalence, with a focus on the MPOWER package.
 
 This project was developed for the course of **Nonparametric Statistics** for the MSc. in Mathematical Engineering at Politecnico di Milano, A.Y. 2022/2023.
 
