@@ -431,6 +431,11 @@ fig<-fig%>% layout(scene = list(
                       xaxis = list(title = "Difference in MPOWER scores (2020-2008)"),
                       yaxis = list(title = "Baseline prevalence 2008 (%)")))
 fig
+
+
+
+
+
 # Create a 2D bubble plot - after removing costarica
 ggplot(data=databub[-7,],aes(x = (data_2020-data_2008)/data_2008*100, 
                         y = ((mpower_all_2020-mpower_all_2008)/mpower_all_2008)*100,
@@ -453,6 +458,8 @@ ggplot(data=databub[-7,],aes(x = (data_2020-data_2008)/data_2008*100,
   geom_vline(xintercept = 0, linetype = "dashed", color = "black") +  # Add the y = x line
   theme(axis.title = element_text(size = 12)) + # Increase the axis label size
   ggtitle("Smoking Prevalence for males in 2008 vs 2020 in OECD Countries")
+
+
 
 
 # Create a 2D bubble plot for males

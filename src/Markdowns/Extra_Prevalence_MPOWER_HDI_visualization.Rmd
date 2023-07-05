@@ -1,0 +1,156 @@
+---
+title: "Visualization Mpower"
+output: html_document
+date: "2023-07-05"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+rm(list=ls())
+
+rm(list=ls())
+
+###Setting the working directory as the project directory
+setwd("~/Documents/GitHub/Nonparametric-Statistics-project/src/Markdowns")
+inputpath = "../../data"
+outputpath = "../../data"
+
+#Import packages
+library(MASS)
+library(rgl)
+library(DepthProc)
+library(hexbin)
+library(aplpack)
+library(robustbase)
+library(ggplot2)
+library(plotly)
+
+
+#Read data and add column which will be used for labelling
+data<-read.table("../../data/final_dataset_2007-2020.txt",header=T, sep='',check.names = FALSE)
+
+##
+countries<-data[data$Year=='2008',1]
+
+HDI_MHI<-data[data$Year=='2008',"HDI_MHI"]
+
+data_2008<-data[data$Year=='2008',5]
+data_2020<-data[data$Year=='2020',5]
+
+data_2008_males<-data[data$Year=='2008',4]
+data_2020_males<-data[data$Year=='2020',4]
+
+data_2008_females<-data[data$Year=='2008',3]
+data_2020_females<-data[data$Year=='2020',3]
+
+
+df1<-cbind(data_2008,data_2020)
+df_f<-cbind(data_2008_females,data_2020_females)
+df_m<-cbind(data_2008_males,data_2020_males)
+
+cluster1<-data[data$Year=='2020',"clust_3"]
+cluster2<-data[data$Year=='2020',"clust_5"]
+
+#Adding MPOWER
+data$mpower_all=((data$Taxes+data$Help+data$Warn+data$Bans+data$Protect)-12)/(29-12)
+
+#####Bubbleplot - from GGPLOT 2
+databub<-data.frame(data_2008=data_2008,
+                    data_2020=data_2020,
+                    HDI_MHI=HDI_MHI)
+
+
+databub$mpower_all_2020<-data[data$Year=='2020',"mpower_all"]
+databub$mpower_all_2008<-data[data$Year=='2008',"mpower_all"]
+databub$clust<-as.factor(data[data$Year=='2008',"HDI_MHI_clustering"])
+
+databub_f<-databub
+databub_f$data_2008<-data_2008_females
+databub_f$data_2020<-data_2020_females
+
+
+databub_m<-databub
+databub_m$data_2008<-data_2008_males
+databub_m$data_2020<-data_2020_males
+
+```
+
+
+
+```{r}
+
+
+fig<-plot_ly(data = databub[-7,], 
+        z = ~I(data_2020 -data_2008), 
+        x = ~I(mpower_all_2020 - mpower_all_2008), 
+        y = ~data_2008,
+        size = ~mpower_all_2008,
+        text = countries[-7],
+    #    color = ~data_2008,
+   #     colors = colorRampPalette(c("green", "red")),
+        marker = list(symbol = "circle", 
+                      sizemode = 'diameter',
+                      color = ~(HDI_MHI),
+                      reversescale = FALSE,
+                      colorscale = "YlOrRd", #"Viridis",  # Specify the desired color scale
+                      showscale = TRUE),
+        sizes  = c(5, 60)
+        ) 
+
+fig<-fig%>%add_markers()
+fig <- fig %>% add_text(
+  x = ~I(mpower_all_2020 - mpower_all_2008),
+  y = ~data_2008,
+  z = ~I(data_2020 - data_2008),
+  text = ~countries[-7],
+  textposition = "top center",
+  textfont = list(size = 12),  # Increase the text size to 12
+  showlegend = FALSE
+)
+fig<-fig%>% layout(scene = list(
+                      zaxis = list(title = "Difference in Smoking prevalence (2020-2008) (%)"),
+                      xaxis = list(title = "Difference in MPOWER scores (2020-2008)"),
+                      yaxis = list(title = "Baseline prevalence 2008 (%)")))
+fig
+
+
+
+
+
+fig<-plot_ly(data = databub[-7,], 
+        z = ~I(data_2020 -data_2008), 
+        x = ~I(mpower_all_2020 - mpower_all_2008), 
+        y = ~data_2008,
+        size = ~mpower_all_2008,
+        text = countries[-7],
+    #    color = ~data_2008,
+   #     colors = colorRampPalette(c("green", "red")),
+        marker = list(symbol = "circle", 
+                      sizemode = 'diameter',
+                      color = ~(HDI_MHI),
+                      reversescale = FALSE,
+                      colorscale = "YlOrRd", #"Viridis",  # Specify the desired color scale
+                      showscale = TRUE),
+        sizes  = c(5, 60)
+        ) 
+
+fig<-fig%>%add_markers()
+fig <- fig %>% add_text(
+  x = ~I(mpower_all_2020 - mpower_all_2008),
+  y = ~data_2008,
+  z = ~I(data_2020 - data_2008),
+  text = ~countries[-7],
+  textposition = "top center",
+  textfont = list(size = 12),  # Increase the text size to 12
+  showlegend = FALSE
+)
+fig<-fig%>% layout(scene = list(
+                      zaxis = list(title = "Difference in Smoking prevalence (2020-2008) (%)"),
+                      xaxis = list(title = "Difference in MPOWER scores (2020-2008)"),
+                      yaxis = list(title = "Baseline prevalence 2008 (%)")))
+fig
+
+
+
+```
+
