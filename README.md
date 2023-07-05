@@ -1,7 +1,7 @@
 
 <!-- omit from toc -->
 # Nonparametric-Statistics-project
-Analysis of data on smoking trends and effects of regulatory polices on OECD countries
+Analysis of data on smoking trends in OECD countries and effects of regulatory polices on prevalence, with a focus on the MPOWER package.
 
 This project was developed for the course of **Nonparametric Statistics** for the MSc. in Mathematical Engineering at Politecnico di Milano, A.Y. 2022/2023.
 
@@ -29,79 +29,22 @@ git submodule update --recursive
 
 
 
-## How to build the `IFWEEVERADDANYPACKAGE` package
-
-Open the `./data/path/to/myRproject.Rproj` in RStudio and type:
-
-- `Ctrl+Shift+B` on Windows
-- `CMD+Shift+B` on macOS
-
-
 
 ## How to install the packages
 
-Install the required packages from CRAN
+Install the required packages from CRAN. All the necessary packages are contained in each Markdown file
 
-```
-packages_list <-
-    c(
-        "tidyverse",
-        
-    )
-install.packages(packages_list)
-```
-
-
-## How to compile the PDF files
-
-To compile the presentations, run the following in the root of the repo
-
-```
-make prese1
-make prese2
-make prese3
-```
-
-To compile the report, run
-
-```
-make report
-```
-
-To compile everything, run
-
-```
-make pdf
-```
-
-To remove temporary `LaTeX` files, run
-
-```
-make clean
-```
-
-To remove both temporary and pdf files, run
-
-```
-make distclean
-```
-
-# Running the analysis
-
-The repository contains different files to perform the analysis
-
-- `01_XXXX.Rmd` is a notebook containing XXXX.
 
 
 # Final results
 
-The final presentations can be found here:
+The final presentations can be found presentations folder
 
 
-The final report can be found here:
+The final report can be found in the report folder
 
 
-The results from the simulations knitted can be found here:
+The results from the simulations knitted can be found in the current folder, while the original markdowns can be found in src/Markdowns
 
 
 # Authors
