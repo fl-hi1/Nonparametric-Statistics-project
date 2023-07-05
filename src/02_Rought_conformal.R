@@ -12,13 +12,13 @@ library(dbscan)
 
 
 #Using a conformal approach to predict the smoking tendency in a OECD country
-rawdata_f<-read.table("../data/semiprocessed_datasets/smoking_prevalence_f.txt",header=T)
-rawdata_m<-read.table("../data/semiprocessed_datasets/smoking_prevalence_m.txt",header=T)
-rawdata_b<-read.table("../data/semiprocessed_datasets/smoking_prevalence_b.txt",header=T)
+#rawdata_curr<-read.table("../data/semiprocessed_datasets/smoking_prevalence_f.txt",header=T)
+rawdata_curr<-read.table("../data/semiprocessed_datasets/smoking_prevalence_m.txt",header=T)
+#rawdata_curr<-read.table("../data/semiprocessed_datasets/smoking_prevalence_b.txt",header=T)
 
-years<-rawdata_f$YEAR..DISPLAY.
+years<-rawdata_curr$YEAR..DISPLAY.
 
-y_f_list=c(rawdata_f[rawdata_f$YEAR..DISPLAY.=='2020',2:37])
+y_f_list=c(rawdata_curr[rawdata_curr$YEAR..DISPLAY.=='2020',2:37])
 y_f<-unlist(y_f_list)
 n<-length(y_f)
 plot(y_f)
@@ -69,9 +69,9 @@ pred_t_interval = range(test_grid[index_in])
 pred_t_interval 
 
 # FOR ALL YEARS
-# FEMALES 6.845729 33.868342 
-# MALES 13.13045 46.32820  
-# BOTH 12.58985 37.56316
+# FEMALES 6.116165 31.660150 
+# MALES 12.57180 40.37143  
+# BOTH 10.65789 33.42105
 
 plot_pval(test_grid, pval_fun, pred_t_interval, alpha)
 
@@ -94,9 +94,9 @@ pval_fun = sapply(test_grid, wrapper_knn)
 index_in = pval_fun > alpha
 pred_knn = test_grid[as.logical(c(0, abs(diff(index_in))))]
 pred_knn 
-# FEMALES 6.485427 33.147739
-# MALES 15.85564 59.45865
-# BOTH 13.82820 48.70827
+# FEMALES 6.116165 32.019925
+# MALES 12.57180 38.24662
+# BOTH 10.78947 33.68421
 
 #Plot p-value function
 plot_pval(test_grid, pval_fun, pred_knn, alpha)
@@ -116,9 +116,9 @@ pval_fun = sapply(test_grid, wrapper_mal)
 index_in = pval_fun > alpha
 pred_mahalanobis = test_grid[as.logical(c(0, abs(diff(index_in))))]
 pred_mahalanobis 
-#FEMALES 6.845729 34.228643
-#MALES 13.13045 46.57594
-#BOTH 12.58985 37.76955
+#FEMALES 6.116165 31.780075
+#MALES 12.5718 40.5485
+#BOTH 10.65789 33.55263
 
 #Plot p-value function
 plot_pval(test_grid, pval_fun, pred_mahalanobis, alpha)
@@ -126,10 +126,10 @@ plot_pval(test_grid, pval_fun, pred_mahalanobis, alpha)
 #Plot histogram of target variable
 hist(
   y_f,
-  breaks = 10,
+  breaks = 12,
   freq = FALSE,
-  main = 'Histogram of Smoking prevalence',
-  xlab = 'Smoking prevalence',
+  main = 'Histogram of male Smoking prevalence',
+  xlab = 'Male smoking prevalence in 2020 (%)',
   ylim= c(0,0.06),
   border = NA
 )
@@ -141,6 +141,12 @@ abline(v = jitter(pred_knn, amount=0.03), col = 'blue', lwd = 2)
 
 legend("topright",
        legend = c("T Prediction Interval", "Mahalanobis", "KNN (k=0.3)"),
-       fill = c("red", "orange", "blue"))
+       fill = c("red", "orange", "blue"), 
+       cex=1.5)
 shapiro.test(y_f)
+
+
+
+
+
 
