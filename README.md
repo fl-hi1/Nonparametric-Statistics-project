@@ -29,62 +29,12 @@ git submodule update --recursive
 
 
 
-## How to build the `IFWEEVERADDANYPACKAGE` package
-
-Open the `./data/path/to/myRproject.Rproj` in RStudio and type:
-
-- `Ctrl+Shift+B` on Windows
-- `CMD+Shift+B` on macOS
-
-
 
 ## How to install the packages
 
-Install the required packages from CRAN
-
-```
-packages_list <-
-    c(
-        "tidyverse",
-        
-    )
-install.packages(packages_list)
-```
+Install the required packages from CRAN. All the necessary packages are contained in each Markdown file
 
 
-## How to compile the PDF files
-
-To compile the presentations, run the following in the root of the repo
-
-```
-make prese1
-make prese2
-make prese3
-```
-
-To compile the report, run
-
-```
-make report
-```
-
-To compile everything, run
-
-```
-make pdf
-```
-
-To remove temporary `LaTeX` files, run
-
-```
-make clean
-```
-
-To remove both temporary and pdf files, run
-
-```
-make distclean
-```
 
 # Running the analysis
 
@@ -95,13 +45,13 @@ The repository contains different files to perform the analysis
 
 # Final results
 
-The final presentations can be found here:
+The final presentations can be found presentations folder
 
 
-The final report can be found here:
+The final report can be found in the report folder
 
 
-The results from the simulations knitted can be found here:
+The results from the simulations knitted can be found in the current folder
 
 
 # Authors
