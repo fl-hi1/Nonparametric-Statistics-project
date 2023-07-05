@@ -44,7 +44,9 @@ The final presentations can be found presentations folder
 The final report can be found in the report folder
 
 
-The results from the simulations knitted can be found in the current folder, while the original markdowns can be found in src/Markdowns
+The results from the simulations knitted can be found in the current folder, while the original markdowns can be found in src/Markdowns,
+
+The markdown starting with "Extra" indicate results which are not included in the report nor in the presentation as they are not complete/rigorous enough, but have been added here as they might still be interesting.
 
 
 # Authors

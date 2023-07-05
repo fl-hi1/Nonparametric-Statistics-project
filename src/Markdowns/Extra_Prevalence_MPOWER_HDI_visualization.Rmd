@@ -153,4 +153,4 @@ fig
 
 
 ```
-
+Here the size of the marker is the baseline MPOWER score. The color is given by the HDI_MHI clustering presented in notebook 2.
